@@ -43,7 +43,7 @@ tracker = Sort()
 
 # Counters and state for each person
 total_counts = {'right': 0, 'left': 0, 'straight': 0, 'inbound': 0, 'outbound': 0}
-person_states = {}  # Stores state of each person: {'crossed_red': bool, 'start_time': float, 'destination_line': str, 'last_pos': tuple}
+person_states = {}  # Stores state of each person: {'has_entered': bool, 'is_inbound': bool, 'destination_line': str, 'last_pos': tuple}
 
 # Open the video file
 cap = cv2.VideoCapture(video_path)
@@ -134,34 +134,34 @@ while True:
         # Initialize state if it's a new person
         if obj_id not in person_states:
             person_states[obj_id] = {
-                'crossed_red': False,
-                'start_time': 0,
+                'has_entered': False,
+                'is_inbound': False,
+                'start_time': time.time(),
                 'destination_line': None,
                 'last_pos': centroid
             }
-            
+        
         last_pos = person_states[obj_id]['last_pos']
         current_pos = centroid
         
         # Check for inbound/outbound crossing
         if is_crossing_line(last_pos, current_pos, red_line[0], red_line[1]):
-            # Check direction of movement based on y-coordinate relative to the line
-            if current_pos[1] > last_pos[1]:  # Moving from top to bottom (inbound)
-                if not person_states[obj_id]['crossed_red']:
-                    person_states[obj_id]['crossed_red'] = True
-                    person_states[obj_id]['start_time'] = time.time()
-                    total_counts['inbound'] += 1
-                    print(f"Person {int(obj_id)} entered (inbound). Total inbound: {total_counts['inbound']}")
-            else:  # Moving from bottom to top (outbound)
-                if not person_states[obj_id]['crossed_red']:
-                    person_states[obj_id]['crossed_red'] = True
-                    person_states[obj_id]['start_time'] = time.time()
-                    total_counts['outbound'] += 1
-                    print(f"Person {int(obj_id)} entered (outbound). Total outbound: {total_counts['outbound']}")
-                    person_states[obj_id]['destination_line'] = None
+            # Check direction of movement based on y-coordinate
+            if current_pos[1] > red_line[0][1] and not person_states[obj_id]['has_entered']: # Person crossed into the area
+                person_states[obj_id]['has_entered'] = True
+                person_states[obj_id]['is_inbound'] = True
+                person_states[obj_id]['start_time'] = time.time()
+                total_counts['inbound'] += 1
+                print(f"Person {int(obj_id)} entered (inbound). Total inbound: {total_counts['inbound']}")
+            elif current_pos[1] < red_line[0][1] and person_states[obj_id]['has_entered']: # Person crossed out of the area
+                person_states[obj_id]['has_entered'] = False
+                person_states[obj_id]['is_inbound'] = False
+                total_counts['outbound'] += 1
+                print(f"Person {int(obj_id)} exited (outbound). Total outbound: {total_counts['outbound']}")
+                person_states[obj_id]['destination_line'] = None
 
-        # Check for destination line crossings if the red line was crossed and destination is not set
-        if person_states[obj_id]['crossed_red'] and person_states[obj_id]['destination_line'] is None:
+        # Check for destination line crossings if the person has entered and destination is not set
+        if person_states[obj_id]['has_entered'] and person_states[obj_id]['destination_line'] is None:
             if is_crossing_line(last_pos, current_pos, blue_line[0], blue_line[1]):
                 person_states[obj_id]['destination_line'] = 'right'
                 duration = time.time() - person_states[obj_id]['start_time']
