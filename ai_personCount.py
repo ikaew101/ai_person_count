@@ -14,21 +14,20 @@ yellow_line = [(552, 983), (1537, 956)]
 
 # Set the desired display window size
 # You can change these values to adjust the window size
-display_width = 1240
-display_height = 1080
+display_width = 1080
+display_height = 740
 
 # A helper function to check if a point has crossed a line segment
 def is_crossing_line(p1, p2, line_start, line_end):
     # Determine the side of the line for each point
     side1 = np.sign(
-        ((line_end[0] - line_start[0]) * (p1[1] - line_start[1])) -
-        ((line_end[1] - line_start[1]) * (p1[0] - line_start[0]))
+        (line_end[0] - line_start[0]) * (p1[1] - line_start[1]) -
+        (line_end[1] - line_start[1]) * (p1[0] - line_start[0])
     )
     side2 = np.sign(
-        ((line_end[0] - line_start[0]) * (p2[1] - line_start[1])) -
-        ((line_end[1] - line_start[1]) * (p2[0] - line_start[0]))
+        (line_end[0] - line_start[0]) * (p2[1] - line_start[1]) -
+        (line_end[1] - line_start[1]) * (p2[0] - line_start[0])
     )
-    print(f"DEBUG: side1 {side1} side2 {side2}") # Log direction check
     # Check if the points are on different sides and the line segments intersect
     return side1 != side2 and side1 != 0 and side2 != 0
 
@@ -37,14 +36,17 @@ def is_crossing_line(p1, p2, line_start, line_end):
 video_path = 'vdo_test1.mp4'
 
 # Load the YOLOv8 model for person detection
-model = YOLO('yolov8n.pt')
+model = YOLO('yolov8n.pt', verbose=False)
 
 # Initialize the SORT tracker
-tracker = Sort(max_age=15, min_hits=3)
+# Adjusted max_age and min_hits for better tracking persistence
+# max_age: Number of frames to wait before deleting a track
+# min_hits: Number of detections to establish a track
+tracker = Sort(max_age=40, min_hits=1)
 
 # Counters and state for each person
 total_counts = {'right': 0, 'left': 0, 'straight': 0, 'inbound': 0, 'outbound': 0}
-person_states = {}  # Stores state of each person: {'crossed_red': bool, 'start_time': float, 'destination_line': str, 'last_pos': tuple}
+person_states = {}  # Stores state of each person: {'has_entered': bool, 'start_time': float, 'destination_line': str, 'last_pos': tuple}
 
 # Open the video file
 cap = cv2.VideoCapture(video_path)
@@ -135,7 +137,6 @@ while True:
         # Initialize state if it's a new person
         if obj_id not in person_states:
             person_states[obj_id] = {
-                'crossed_red': False,
                 'has_entered': False,
                 'start_time': 0,
                 'destination_line': None,
@@ -147,44 +148,38 @@ while True:
         
         # Check for inbound/outbound crossing
         if is_crossing_line(last_pos, current_pos, red_line[0], red_line[1]):
-            # Check direction of movement based on y-coordinate relative to the line
-            if current_pos[1] > last_pos[1]:  # Moving from top to bottom (inbound)
-                if not person_states[obj_id]['crossed_red']:
-                    person_states[obj_id]['crossed_red'] = True
-                    person_states[obj_id]['has_entered'] = True
-                    person_states[obj_id]['start_time'] = time.time()
-                    total_counts['inbound'] += 1
-                    print(f"Person {int(obj_id)} entered (inbound). Total inbound: {total_counts['inbound']}")
-            else:  # Moving from bottom to top (outbound)
-                if not person_states[obj_id]['crossed_red']:
-                    person_states[obj_id]['crossed_red'] = True
-                    person_states[obj_id]['has_entered'] = False
-                    person_states[obj_id]['start_time'] = time.time()
-                    total_counts['outbound'] += 1
-                    print(f"Person {int(obj_id)} entered (outbound). Total outbound: {total_counts['outbound']}")
-                    person_states[obj_id]['destination_line'] = None
+            # Moving from top to bottom (inbound)
+            if current_pos[1] > last_pos[1] and not person_states[obj_id]['has_entered']:
+                person_states[obj_id]['has_entered'] = True
+                person_states[obj_id]['start_time'] = time.time()
+                total_counts['inbound'] += 1
+                print(f"Person {int(obj_id)} entered (inbound). Total inbound: {total_counts['inbound']}")
+            # Moving from bottom to top (outbound)
+            elif not person_states[obj_id]['has_entered']:
+                person_states[obj_id]['has_entered'] = False
+                total_counts['outbound'] += 1
+                print(f"Person {int(obj_id)} exited (outbound). Total outbound: {total_counts['outbound']}")
+                person_states[obj_id]['destination_line'] = None
 
         # Check for destination line crossings if the person has entered and destination is not set
-        print(f"DEBUG: Person {int(obj_id)} , check direction. has_entered: {person_states[obj_id]['has_entered']}, destination_line: {person_states[obj_id]['destination_line']}") # Log direction check
         if person_states[obj_id]['has_entered'] and person_states[obj_id]['destination_line'] is None:
-            print(f"DEBUG: Person {int(obj_id)} Direction last_pos:{last_pos}, current_pos:{current_pos}, blue_line 0:{blue_line[0]}, blue_line 1:{blue_line[1]}") # Log direction check
             if is_crossing_line(last_pos, current_pos, blue_line[0], blue_line[1]):
                 person_states[obj_id]['destination_line'] = 'right'
                 duration = time.time() - person_states[obj_id]['start_time']
                 total_counts['right'] += 1
-                print(f"DEBUG: Person {int(obj_id)} turned right. Duration: {duration:.2f}s. Total right: {total_counts['right']}") # Log right turn
+                print(f"Person {int(obj_id)} turned right. Duration: {duration:.2f}s. Total right: {total_counts['right']}")
 
             elif is_crossing_line(last_pos, current_pos, green_line[0], green_line[1]):
                 person_states[obj_id]['destination_line'] = 'left'
                 duration = time.time() - person_states[obj_id]['start_time']
                 total_counts['left'] += 1
-                print(f"DEBUG: Person {int(obj_id)} turned left. Duration: {duration:.2f}s. Total left: {total_counts['left']}") # Log left turn
+                print(f"Person {int(obj_id)} turned left. Duration: {duration:.2f}s. Total left: {total_counts['left']}")
 
             elif is_crossing_line(last_pos, current_pos, yellow_line[0], yellow_line[1]):
                 person_states[obj_id]['destination_line'] = 'straight'
                 duration = time.time() - person_states[obj_id]['start_time']
                 total_counts['straight'] += 1
-                print(f"DEBUG: Person {int(obj_id)} went straight. Duration: {duration:.2f}s. Total straight: {total_counts['straight']}") # Log straight move
+                print(f"Person {int(obj_id)} went straight. Duration: {duration:.2f}s. Total straight: {total_counts['straight']}")
 
 
         # Update last position for the next frame
@@ -204,7 +199,7 @@ while True:
     cv2.putText(frame, f"Outbound: {total_counts['outbound']}", (10, 190), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
     cv2.imshow('Video Analysis', frame)
 
-    cv2.waitKey(0)
+    cv2.waitKey(1) # Changed from 1 to 0 for manual frame-by-frame progression
 
 cap.release()
 cv2.destroyAllWindows()
