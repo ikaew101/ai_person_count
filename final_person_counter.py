@@ -186,7 +186,7 @@ def main():
             cv2.line(frame, blue_line[0], blue_line[1], (255, 0, 0), 2)
             cv2.line(frame, green_line[0], green_line[1], (0, 255, 0), 2)
             cv2.line(frame, yellow_line[0], yellow_line[1], (0, 255, 255), 2)
-            cv2.putText(frame, f"Inbound: {counts['inbound']}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+            cv2.putText(frame, f"Inbound: {counts['inbound']}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
 
             # --- NEW: วาด Mouse Hover Overlay และรับปุ่ม ---
             if mouse_pos_raw[0] >= 0:

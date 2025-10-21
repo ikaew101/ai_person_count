@@ -3,8 +3,8 @@
     "video_path": "vdo/5033_NorthPattaya-Entrance2.mp4",
     "display_width": 1280,
     "pink_zone": [
-      [123, 47],
-      [480, 187]
+      [100, 15],
+      [520, 187]
     ],
     "lines": {
       "red":    [[117, 140], [504, 140]],
