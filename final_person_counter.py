@@ -17,7 +17,7 @@ SNAP_DIR = "qa_events"  # โฟลเดอร์สำหรับเก็บ
 
 # =================== MODEL / TRACKER (Global) ====================
 print("Loading AI model...")
-model = YOLO("yolov8n.pt", verbose=False)
+model = YOLO("core/yolov8m.pt", verbose=False)
 tracker = Sort(max_age=cfg.MAX_AGE_FRAMES, min_hits=3, iou_threshold=0.2)
 print("Model loaded successfully.")
 
