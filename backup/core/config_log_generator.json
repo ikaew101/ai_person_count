@@ -1,0 +1,19 @@
+{
+  "default": {
+    "boundary_box": [[100, 50], [1820, 1000]]
+  },
+  "gdrive_log_folder_id": "1ga6HeLb3cQkViYrkqqwhC8TIMjQHEH-C",
+  "cameras": {
+    "North_Pattaya_Entrance2": {
+      "video_filename_gdrive": "5033 North Pattaya (Cam- 61 ) - Entrance2.mp4",
+      "timestamp_roi": [1550, 30, 1850, 70],
+      "lines": {
+        "top":    [[110, 50], [490, 50]],
+        "right":   [[490, 50], [490, 344]],   
+        "left":  [[110, 50], [110, 344]],
+        "bottom": [[110, 344], [490, 344]],
+        "red": [[90, 151], [510, 151]]   
+      }
+    }
+  }
+}
