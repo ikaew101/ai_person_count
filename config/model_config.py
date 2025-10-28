@@ -41,3 +41,8 @@ HOT_REID_TIMELOCK_S   = 2.0
 
 # Direction gating
 DIR_MIN_TRAVEL_PX     = 30
+
+# Cooldown for 'counted' state to prevent immediate re-counting
+COUNTED_COOLDOWN_SECONDS = 5.0
+# Distance threshold (pixels) to consider a reappearance near the last counted position
+REAPPEAR_DISTANCE_THRESHOLD = 100
