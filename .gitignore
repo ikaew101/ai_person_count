@@ -1,5 +1,5 @@
 *.mp4
 qa_camera_check
 .env
-vdo
+vdo/*
 config/config_points.txt
