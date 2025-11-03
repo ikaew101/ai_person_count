@@ -2,6 +2,7 @@
   "5033_entrance2": {
     "video_path": "vdo/5033_NorthPattaya-Entrance2.mp4",
     "display_width": 1280,
+    "timestamp_roi": [80, 16, 239, 33],
     "pink_zone": [
       [100, 15],
       [520, 187]
@@ -11,6 +12,24 @@
       "blue":   [[117, 140], [83, 297]],
       "green":  [[504, 140], [580, 297]],
       "yellow": [[83, 297], [580, 297]]
+    }
+  },
+  "5129_Banglen-Yao": {
+    "video_path": "vdo/5129_Banglen-Yaowarat.mp4",
+    "display_width": 1280,
+    "timestamp_roi": [80, 16, 239, 33],
+    "pink_zone": [
+      [0, 79],
+      [55, 267],
+      [293, 159],
+      [288, 14]
+      
+    ],
+    "lines": {
+      "red":    [[26, 186], [290, 94]],
+      "blue":   [[26, 186], [91, 370]],
+      "green":  [[290, 94], [570, 170]],
+      "yellow": [[91, 370], [570, 170]]
     }
   }
 }

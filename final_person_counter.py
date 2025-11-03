@@ -29,6 +29,7 @@ BASE_OUTPUT_DIR = "qa_camera_check" # เปลี่ยนชื่อโฟล
 SIGN_HISTORY_LENGTH = 3
 INTERVAL_MINUTES = 5 # กำหนดช่วงเวลาเป็น 5 นาที
 
+current_run_timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 # --- Tesseract ---
 try:
     import pytesseract
@@ -66,23 +67,38 @@ def get_timestamp_from_frame(frame, roi):
         x1,y1,x2,y2=roi; h,w,_=frame.shape; x1,y1=max(0,x1),max(0,y1); x2,y2=min(w,x2),min(h,y2)
         if y2<=y1 or x2<=x1: return None
         ts_img=frame[y1:y2,x1:x2]; gray=cv2.cvtColor(ts_img,cv2.COLOR_BGR2GRAY)
-        binary=cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,5)
+        
+        # --- ปรับปรุงการประมวลผลภาพสำหรับ ROI ที่เล็กลง ---
+        # ปรับ blockSize ให้เล็กลง (เช่น 7) และ C (เช่น 3)
+        binary=cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV, blockSize=7, C=3)
+        # --- จบการปรับปรุง ---
+
         text=pytesseract.image_to_string(binary,config=r'--oem 3 --psm 6')
-        match=re.search(r'(\d{2})-(\d{4}).*?(\d{2}:\d{2}:\d{2})',text.replace(" ",""))
-        if match: m,y,t=match.groups(); return datetime.strptime(f"01-{m}-{y} {t}",'%d-%m-%Y %H:%M:%S')
-    except: return None
+        
+        # --- MODIFIED: แก้ไข Regex ให้ตรงกับ DD-MM-YYYY ---
+        match = re.search(r'(\d{2})-(\d{2})-(\d{4}).*?(\d{2}:\d{2}:\d{2})', text.replace(" ", ""))
+        if match: 
+            day, month, year, time_str = match.groups() # <-- ดึง day, month, year
+            try: 
+                 # ใช้ day ที่ดึงมาได้เลย
+                 return datetime.strptime(f"{day}-{month}-{year} {time_str}", '%d-%m-%Y %H:%M:%S')
+            except ValueError: 
+                 return None
+    except Exception as e:
+        # print(f"OCR Error: {e}") # (Optional: Uncomment for debugging)
+        return None
     return None
 
 def ensure_dir(dir_path):
     if not os.path.exists(dir_path): os.makedirs(dir_path); print(f"Created directory: {dir_path}")
 
 # --- NEW: Helper สำหรับจัดการ Output ของแต่ละ Interval ---
-def setup_interval_output(base_output_dir, camera_name, interval_idx):
+def setup_interval_output(base_output_dir, camera_name, current_run_timestamp, interval_idx):
     """สร้าง Directory และเปิดไฟล์ Log สำหรับ Interval ใหม่"""
     interval_minutes = (interval_idx + 1) * INTERVAL_MINUTES
     interval_label = f"{interval_minutes:02d}Min" # e.g., "05Min", "10Min"
     
-    interval_dir = os.path.join(base_output_dir, camera_name, interval_label)
+    interval_dir = os.path.join(base_output_dir, camera_name, current_run_timestamp, interval_label)
     log_dir = os.path.join(interval_dir, "logs")
     snapshot_dir = os.path.join(interval_dir, "person_snapshots")
     
@@ -119,7 +135,7 @@ def main():
     blue_line=tuple(map(tuple,config['lines']['blue']))
     green_line=tuple(map(tuple,config['lines']['green']))
     yellow_line=tuple(map(tuple,config['lines']['yellow']))
-    pink_zone=tuple(map(tuple,config['pink_zone']))
+    pink_zone = config['pink_zone']
     timestamp_roi=config.get('timestamp_roi')
 
     cap = cv2.VideoCapture(video_path)
@@ -136,14 +152,25 @@ def main():
     neg_is_bottom_red=make_side_label(red_line[0],red_line[1])
     bottom_sign=-1 if neg_is_bottom_red else 1; top_sign=-bottom_sign
 
+     # --- MODIFIED: Mouse Callback (แก้ไข Syntax และเพิ่มการบันทึกไฟล์) ---
+    CONFIG_HELPER_FILE = "config/config_points.txt"
+    
     # --- Mouse Callback ---
     def _on_mouse(event, x, y, flags, param):
-        nonlocal mouse_pos_raw # <--- ย้ายลงมา + ย่อหน้า
+        nonlocal mouse_pos_raw # <--- ขึ้นบรรทัดใหม่
         rx = int(x * original_w / display_width)
         ry = int(y * original_h / display_height)
         mouse_pos_raw = (rx, ry)
+        # --- NEW: บันทึกพิกัดลงไฟล์เมื่อคลิกซ้าย ---
         if event == cv2.EVENT_LBUTTONDOWN:
-            print(f"Clicked: ({rx}, {ry})")
+            coord_str = f"[{rx}, {ry}],"
+            print(f"Clicked Coordinates: ({rx}, {ry}) - Saved to {CONFIG_HELPER_FILE}")
+            try:
+                with open(CONFIG_HELPER_FILE, "a") as f: # "a" = append
+                    f.write(coord_str + "\n")
+            except Exception as e:
+                print(f"Error writing to {CONFIG_HELPER_FILE}: {e}")
+        # --- END NEW ---
     cv2.setMouseCallback("Video Analysis", _on_mouse)
 
     # --- Interval Management Variables ---
@@ -176,14 +203,13 @@ def main():
                 
                 # ตั้งค่า Output สำหรับ Interval ใหม่
                 _, csv_file, csvw, current_snapshot_dir = setup_interval_output(
-                    BASE_OUTPUT_DIR, args.camera_name, expected_interval_idx
+                    BASE_OUTPUT_DIR, args.camera_name, current_run_timestamp, expected_interval_idx
                 )
                 current_interval_idx = expected_interval_idx
 
-            # ถ้ายังไม่ได้ตั้งค่า Interval แรก (กรณีเริ่มวิดีโอ)
             if current_interval_idx == -1:
                  _, csv_file, csvw, current_snapshot_dir = setup_interval_output(
-                    BASE_OUTPUT_DIR, args.camera_name, 0
+                    BASE_OUTPUT_DIR, args.camera_name, current_run_timestamp, 0
                 )
                  current_interval_idx = 0
 
@@ -238,7 +264,6 @@ def main():
 
                 if st['state'] == 'waiting' and crossed_top_to_bottom: st['state']='crossed_red'
                 elif st['state'] == 'crossed_red' and crossed_bottom_to_top: st['state']='waiting'
-                # ไม่ต้องเก็บ prev_pos แล้ว
 
                 # --- Drawing ---
                 cv2.rectangle(frame,(bbox[0],bbox[1]),(bbox[2],bbox[3]),(255,255,0),2)
@@ -252,7 +277,6 @@ def main():
             for pid, st in person_states.items():
                 if pid not in processed_pids_this_frame:
                     if st['state'] == 'crossed_red':
-                         # ตรวจสอบว่า csvw ถูกต้องหรือไม่ ก่อนเขียน
                          if csvw is not None and current_snapshot_dir is not None:
                               counts['inbound'] += 1
                               print(f"PID {pid}: Exited -> COUNT = {counts['inbound']}")
@@ -263,8 +287,7 @@ def main():
                               last_frame_s = st.get('last_frame_seen')
                               if last_frame_s is not None:
                                    frame_s = last_frame_s.copy()
-                                   cv2.rectangle(frame_s, pink_zone[0], pink_zone[1], (255,182,193), 2)
-                                   # ... (วาดเส้นอื่นๆ) ...
+                                   cv2.polylines(frame, [np.array(pink_zone, dtype=np.int32)], isClosed=True, color=(255, 182, 193), thickness=2)
                                    cv2.line(frame_s, red_line[0], red_line[1], (0,0,255), 2)
                                    cv2.line(frame_s, blue_line[0], blue_line[1], (255,0,0), 2)
                                    cv2.line(frame_s, green_line[0], green_line[1], (0,255,0), 2)
@@ -294,13 +317,13 @@ def main():
                     # print(f"Removed expired PID: {pid}") # Debug
 
             # --- UI Display ---
-            cv2.rectangle(frame, pink_zone[0], pink_zone[1], (255,182,193), 2)
+            cv2.polylines(frame, [np.array(pink_zone, dtype=np.int32)], isClosed=True, color=(255, 182, 193), thickness=2)
             # ... (วาดเส้นและ Text อื่นๆ) ...
             cv2.line(frame, red_line[0], red_line[1], (0,0,255), 2)
             cv2.line(frame, blue_line[0], blue_line[1], (255,0,0), 2)
             cv2.line(frame, green_line[0], green_line[1], (0,255,0), 2)
             cv2.line(frame, yellow_line[0], yellow_line[1], (0,255,255), 2)
-            cv2.putText(frame, f"Inbound: {counts['inbound']}", (10,60), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,255,255), 2)
+            cv2.putText(frame, f"Entrance: {counts['inbound']}", (10, original_h - 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
 
             if display_timestamp_str:
                  try:
@@ -311,8 +334,8 @@ def main():
                  except: pass
             cv2.putText(frame, display_timestamp_str, (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,255,255), 1)
 
-            if mouse_pos_raw[0]>=0:
-                cv2.drawMarker(frame,(mouse_pos_raw[0],mouse_pos_raw[1]),(0,255,255), cv2.MARKER_CROSS,20,2)
+            if mouse_pos_raw[0]>=0 and paused:
+                cv2.drawMarker(frame, (mouse_pos_raw[0], mouse_pos_raw[1]), (0, 255, 255), markerType=cv2.MARKER_CROSS, markerSize=20, thickness=2)
                 text=f"x:{mouse_pos_raw[0]} y:{mouse_pos_raw[1]}"; cv2.putText(frame,text,(mouse_pos_raw[0]+15,mouse_pos_raw[1]-15),cv2.FONT_HERSHEY_SIMPLEX,0.6,(0,255,255),2)
 
             cv2.imshow('Video Analysis', cv2.resize(frame, (display_width, display_height)))
