@@ -3,3 +3,4 @@ qa_camera_check
 .env
 vdo/*
 config/config_points.txt
+config/__pycache__/*.pyc
