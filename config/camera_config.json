@@ -48,5 +48,39 @@
       "green":  [[425, 159], [477, 271]],
       "yellow": [[121, 349], [477, 271]]
     }
+  },
+  "lampun-19_new": {
+    "video_path": "vdo/Lampun-19_CUSTOMER-ENTRANCE_new.mp4",
+    "display_width": 1280,
+    "timestamp_roi": [0, 0, 0, 0],
+    "pink_zone": [
+      [65, 38],
+      [67, 143],
+      [321, 127],
+      [328, 20]
+    ],
+    "lines": {
+      "red":    [[112, 82], [282, 79]],
+      "blue":   [[112, 82], [39, 165]],
+      "green":  [[282, 79], [387, 267]],
+      "yellow": [[39, 165], [387, 267]]
+    }
+  },
+  "lampun-19_old": {
+    "video_path": "vdo/Lampun-19_CUSTOMER-ENTRANCE_old.mp4",
+    "display_width": 1280,
+    "timestamp_roi": [0, 0, 0, 0],
+    "pink_zone": [
+      [65, 38],
+      [67, 143],
+      [321, 127],
+      [328, 20]
+    ],
+    "lines": {
+      "red":    [[112, 82], [282, 79]],
+      "blue":   [[112, 82], [39, 165]],
+      "green":  [[282, 79], [387, 267]],
+      "yellow": [[39, 165], [387, 267]]
+    }
   }
 }

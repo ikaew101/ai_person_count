@@ -22,6 +22,20 @@ echo Processing Camera: Rawai2-CAM24 (Start: 30 min, Duration: 30 min)
 echo ===========================================
 python ai_personCount.py 166_rawai2-cam24 --start_min 30 --duration_min 30
 
+REM --- lampun-19_old ---
+echo.
+echo ===========================================
+echo Processing Camera: lampun-19_old (Full Video)
+echo ===========================================
+python ai_personCount.py lampun-19_old
+
+REM --- lampun-19_new ---
+echo.
+echo ===========================================
+echo Processing Camera: lampun-19_new (Full Video)
+echo ===========================================
+python ai_personCount.py lampun-19_new
+
 echo.
 echo ===========================================
 echo All processing complete.
