@@ -85,9 +85,37 @@ def format_seconds(seconds):
     return str(timedelta(seconds=int(seconds)))
 # --- END NEW ---
 
-# --- REMOVED: setup_interval_output function ---
+def is_crossing_line(p1, p2, a, b):
+    """
+    ตรวจสอบว่าเส้นจาก p1 ไป p2 ตัดกับเส้น a ไป b หรือไม่
+    (ปรับปรุงให้รองรับกรณีจุดอยู่บนเส้น)
+    """
+    # ตรวจสอบชนิดข้อมูลก่อนเรียก _cross_sign
+    if p1 is None or p2 is None or a is None or b is None:
+        return False
+        
+    s1 = _cross_sign(p1, a, b)
+    s2 = _cross_sign(p2, a, b)
+    
+    # กรณีทั่วไป: ข้ามเส้น (อยู่คนละฝั่ง)
+    if s1 * s2 < 0:
+        s3 = _cross_sign(a, p1, p2)
+        s4 = _cross_sign(b, p1, p2)
+        if s3 * s4 <= 0: return True
+             
+    # กรณีพิเศษ: จุดใดจุดหนึ่งอยู่บนเส้นพอดี
+    elif s1 == 0 and s2 != 0:
+        s3 = _cross_sign(a, p1, p2)
+        s4 = _cross_sign(b, p1, p2)
+        if s3 * s4 <= 0: return True
+             
+    elif s2 == 0 and s1 != 0:
+        s3 = _cross_sign(a, p1, p2)
+        s4 = _cross_sign(b, p1, p2)
+        if s3 * s4 <= 0: return True
 
-# ====================== MAIN LOGIC =========================
+    return False
+
 # ====================== MAIN LOGIC =========================
 def main():
     # --- MODIFIED: เพิ่ม Arguments สำหรับ Time Range (ใช้ นาที) ---
@@ -137,9 +165,11 @@ def main():
     counts={"inbound":0}; person_states={}; next_pid=1
     tid_to_pid = {}
     
+    # --- MODIFIED: นำ Logic การกำหนดฝั่ง (Sign) กลับมา ---
     neg_is_bottom_red=make_side_label(red_line[0],red_line[1])
     bottom_sign=-1 if neg_is_bottom_red else 1; top_sign=-bottom_sign
-
+    # --- END MODIFIED ---
+    
     # --- Mouse Callback (FIXED) ---
     CONFIG_HELPER_FILE = "config/config_points.txt"
     def _on_mouse(event, x, y, flags, param):
@@ -156,10 +186,8 @@ def main():
     cv2.setMouseCallback("Video Analysis", _on_mouse)
     # --- END FIX ---
     
-    # --- NEW: ตัวแปรสำหรับ Summary Log ---
-    video_start_time_processed = None # เวลา (วิดีโอ) ที่เริ่มประมวลผล
-    video_end_time_processed = None   # เวลา (วิดีโอ) ที่สิ้นสุดการประมวลผล
-    # --- END NEW ---
+    video_start_time_processed = None
+    video_end_time_processed = None
     
     last_frame = None
 
@@ -168,50 +196,38 @@ def main():
             csvw = csv.writer(csv_file, delimiter=','); csvw.writerow(["Video Time (HH:MM:SS)","Camera Name","PID","Status"])
 
             while True:
-                current_time_dt = datetime.now() # เวลาปัจจุบันของเครื่อง
+                current_time_dt = datetime.now()
                 
-                # --- MODIFIED: แก้ไข Logic การอ่านเฟรมและ Pause (FIXED) ---
                 if not paused:
-                    ret, frame = cap.read() # <-- 1. อ่านเฟรมใหม่ "เสมอ" ถ้าไม่ Pause
+                    ret, frame = cap.read()
                     if not ret: break
-                    last_frame = frame.copy() # <-- 2. เก็บเฟรมล่าสุดไว้
-                
-                if last_frame is None: continue # (เผื่อเฟรมแรกอ่านไม่ได้)
-                
-                frame = last_frame.copy() # <-- 3. ใช้ "frame" เป็นสำเนาของเฟรมล่าสุดเสมอ
-                # --- END MODIFIED ---
+                    last_frame = frame.copy()
+                if last_frame is None: continue
+                frame = last_frame.copy()
 
-                # --- Get Video Time ---
                 current_video_msec = cap.get(cv2.CAP_PROP_POS_MSEC)
                 current_video_sec = current_video_msec / 1000.0
                 
                 ocr_timestamp_dt = get_timestamp_from_frame(frame, timestamp_roi)
                 display_timestamp_str = ocr_timestamp_dt.strftime('%d-%m-%Y %H:%M:%S') if ocr_timestamp_dt else ""
 
-                # --- NEW: Time Range Check (ย้ายมาไว้หลังอ่านเฟรม) ---
-                process_this_frame = True # ตั้งค่าเริ่มต้น
-                
+                # --- Time Range Check ---
+                process_this_frame = True
                 if current_video_sec < (args.start_min * 60):
-                    process_this_frame = False # ยังไม่ถึงเวลา
-                
-                elif video_start_time_processed is None: # ถ้าเพิ่งเข้าสู่ช่วงเวลาประมวลผล
+                    process_this_frame = False
+                elif video_start_time_processed is None:
                     video_start_time_processed = current_video_sec
                     print(f"Processing started at video time: {format_seconds(video_start_time_processed)}")
-
-                # ถ้ากำหนด --duration_min และประมวลผลครบแล้ว
                 if args.duration_min is not None and video_start_time_processed is not None and \
                    (current_video_sec - video_start_time_processed) > (args.duration_min * 60):
                     print(f"Processing duration of {args.duration_min} minutes reached. Stopping.")
-                    break # หยุด Loop
-
+                    break
                 if process_this_frame:
-                     video_end_time_processed = current_video_sec # อัปเดตเวลาสิ้นสุดที่ประมวลผล (อัปเดตเรื่อยๆ)
-                # --- END NEW ---
+                     video_end_time_processed = current_video_sec
 
-                # --- Detection, Tracking, State Machine (ต้องอยู่ข้างใน if) ---
                 if process_this_frame:
                     dets=[]; tracks=np.empty((0,5)); valid_results=False
-                    results = model(frame, stream=True, conf=cfg.SCORE_THR)
+                    results = model(frame, stream=True, conf=cfg.SCORE_THR, verbose=False)
                     for r in results:
                         valid_results=True
                         for box in r.boxes.data:
@@ -219,30 +235,50 @@ def main():
                     if valid_results: tracks=tracker.update(np.array(dets) if dets else np.empty((0,5)))
                     live_tids = {int(t[4]) for t in tracks}
 
-                    # --- State Machine & Re-ID Logic ---
+                    # --- State Machine & Re-ID Logic (REVISED - Back to Sign History) ---
                     processed_pids_this_frame = set()
                     for x1, y1, x2, y2, tid in tracks:
                         tid, bbox = int(tid), (int(x1), int(y1), int(x2), int(y2))
                         cur_pos = np.array([(x1 + x2) / 2, y1])
                         pid = tid_to_pid.get(tid)
+                        
                         if pid is None or pid not in person_states:
                             pid = next_pid; next_pid += 1
                             tid_to_pid[tid] = pid
-                            person_states[pid] = {'state': 'waiting', 'sign_history': deque(maxlen=SIGN_HISTORY_LENGTH), 'last_frame_seen': frame.copy(), 'last_bbox': bbox, 'last_pos': cur_pos, 'last_tid': tid, 'last_seen_time': current_time_dt}
+                            # --- MODIFIED: เพิ่ม 'sign_history' ---
+                            person_states[pid] = {'state': 'waiting', 
+                                                  'sign_history': deque(maxlen=SIGN_HISTORY_LENGTH), 
+                                                  'last_frame_seen': frame.copy(), 'last_bbox': bbox, 
+                                                  'last_pos': cur_pos, 'last_tid': tid, 
+                                                  'last_seen_time': current_time_dt}
+                        
                         st = person_states[pid]
                         st['tid'] = tid; st['last_bbox'] = bbox; st['last_frame_seen'] = frame.copy()
                         st['last_pos'] = cur_pos; st['last_seen_time'] = current_time_dt
                         processed_pids_this_frame.add(pid)
+
+                        # --- MODIFIED: ใช้ Logic Sign History ---
                         current_sign = _cross_sign(cur_pos, red_line[0], red_line[1])
-                        if current_sign != 0: st['sign_history'].append(current_sign)
+                        if current_sign != 0: st['sign_history'].append(current_sign) # ไม่เก็บ sign 0
                         history = list(st['sign_history'])
+
                         crossed_top_to_bottom=False; crossed_bottom_to_top=False
                         if len(history)>=2:
                             prev_s, last_s = history[-2], history[-1]
-                            if prev_s==top_sign and last_s==bottom_sign: crossed_top_to_bottom=True
-                            elif prev_s==bottom_sign and last_s==top_sign: crossed_bottom_to_top=True
-                        if st['state'] == 'waiting' and crossed_top_to_bottom: st['state']='crossed_red'
-                        elif st['state'] == 'crossed_red' and crossed_bottom_to_top: st['state']='waiting'
+                            # เช็คว่าเปลี่ยนจาก Top -> Bottom
+                            if prev_s==top_sign and last_s==bottom_sign:
+                                crossed_top_to_bottom=True
+                            # เช็คว่าเปลี่ยนจาก Bottom -> Top
+                            elif prev_s==bottom_sign and last_s==top_sign:
+                                crossed_bottom_to_top=True
+
+                        if st['state'] == 'waiting' and crossed_top_to_bottom: 
+                            st['state']='crossed_red'
+                            print(f"PID {pid}: State -> crossed_red (Sign Hist)") # Debug
+                        elif st['state'] == 'crossed_red' and crossed_bottom_to_top: 
+                            st['state']='waiting'
+                            print(f"PID {pid}: State -> waiting (Crossed back)") # Debug
+                        # --- END MODIFIED ---
                         
                         # --- Drawing ---
                         cv2.rectangle(frame,(bbox[0],bbox[1]),(bbox[2],bbox[3]),(255,255,0),2)
@@ -288,13 +324,13 @@ def main():
                             if last_tid in tid_to_pid and tid_to_pid[last_tid] == pid: del tid_to_pid[last_tid]
                             del person_states[pid]
                 
-                # --- UI Display (อยู่นอก if process_this_frame) ---
+                # --- UI Display ---
                 cv2.polylines(frame, [np.array(pink_zone, dtype=np.int32)], isClosed=True, color=(255, 182, 193), thickness=2)
                 cv2.line(frame, red_line[0], red_line[1], (0,0,255), 2)
                 cv2.line(frame, blue_line[0], blue_line[1], (255,0,0), 2)
                 cv2.line(frame, green_line[0], green_line[1], (0,255,0), 2)
                 cv2.line(frame, yellow_line[0], yellow_line[1], (0,255,255), 2)
-                cv2.putText(frame, f"Inbound: {counts['inbound']}", (10, original_h - 40), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+                cv2.putText(frame, f"Extrance: {counts['inbound']}", (10, original_h - 40), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
                 if display_timestamp_str:
                      try:
                           font_scale=0.6; thickness=1; font=cv2.FONT_HERSHEY_SIMPLEX; text_x,text_y=10,30
@@ -308,34 +344,24 @@ def main():
                     text=f"x:{mouse_pos_raw[0]} y:{mouse_pos_raw[1]}"; cv2.putText(frame,text,(mouse_pos_raw[0]+15,mouse_pos_raw[1]-15),cv2.FONT_HERSHEY_SIMPLEX,0.6,(0,255,255),2)
 
                 cv2.imshow('Video Analysis', cv2.resize(frame, (display_width, display_height)))
-                
-                # --- MODIFIED: เพิ่มเวลารอให้ UI ---
-                k = cv2.waitKey(10) & 0xFF # เพิ่มจาก 1 เป็น 10 (หรือ 25)
-                # --- END MODIFIED ---
-                
-                if k == 27:
-                    break
-                elif k == ord('p'): 
-                    paused = not paused
+                k = cv2.waitKey(10) & 0xFF
+                if k == 27: break
+                elif k == ord('p'): paused = not paused
             
     except KeyboardInterrupt:
         print("\nUser interrupted process (Ctrl+C).")
     finally:
-        # --- NEW: บันทึก Summary Log ---
+        # --- บันทึก Summary Log ---
         print("\n--- Writing Summary Log ---")
         try:
             with open(summary_log_path, "w", newline="", encoding='utf-8') as summary_f:
                 summary_csvw = csv.writer(summary_f, delimiter=',')
                 summary_csvw.writerow(["Camera Name", "Total Inbound", "Video Start Time Processed (HH:MM:SS)", "Video End Time Processed (HH:MM:SS)", "Run Timestamp"])
-                
                 start_str = format_seconds(video_start_time_processed)
                 end_str = format_seconds(video_end_time_processed)
-                
                 summary_csvw.writerow([args.camera_name, counts["inbound"], start_str, end_str, current_run_timestamp])
             print(f"Saved summary log to: {summary_log_path}")
-        except Exception as e:
-            print(f"Error writing summary log: {e}")
-        # --- END NEW ---
+        except Exception as e: print(f"Error writing summary log: {e}")
         
         if 'csv_file' in locals() and csv_file is not None and not csv_file.closed:
             csv_file.close()

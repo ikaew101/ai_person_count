@@ -46,3 +46,7 @@ DIR_MIN_TRAVEL_PX     = 30
 COUNTED_COOLDOWN_SECONDS = 5.0
 # Distance threshold (pixels) to consider a reappearance near the last counted position
 REAPPEAR_DISTANCE_THRESHOLD = 100
+
+# Cooldown for 'counted' state to prevent immediate re-counting
+COUNTED_COOLDOWN_SECONDS = 5.0 # (ปรับเวลาได้ตามต้องการ)
+REAPPEAR_DISTANCE_THRESHOLD = 150 # (ปรับระยะห่างได้ตามต้องการ)
