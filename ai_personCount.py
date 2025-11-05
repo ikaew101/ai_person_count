@@ -303,7 +303,7 @@ def main():
                         if pid not in processed_pids_this_frame:
                             if st['state'] == 'crossed_red':
                                  counts['inbound'] += 1
-                                 video_time_str = format_seconds(current_video_sec)
+                                 video_time_str = format_seconds(current_video_sec, video_hour)
                                  print(f"PID {pid}: Exited -> COUNT = {counts['inbound']} (Video Time: {video_time_str})")
                                  
                                  # --- NEW: เพิ่ม hour_offset ใน Log ---
@@ -348,7 +348,7 @@ def main():
                 
                 # --- MODIFIED: เพิ่ม Video Time (HH:MM:SS) ใต้ Inbound ---
                 inbound_text = f"Entrance: {counts['inbound']}" # แก้ไขคำว่า "Extrance"
-                video_time_text = f"Video Time: {format_seconds(current_video_sec)}"
+                video_time_text = f"Video Time: {format_seconds(current_video_sec, video_hour)}"
                 cv2.putText(frame, inbound_text, (10, original_h - 40), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
                 cv2.putText(frame, video_time_text, (10, original_h - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2) # แสดงเวลาด้านล่าง
                 # --- END MODIFIED ---
@@ -389,8 +389,8 @@ def main():
                 summary_csvw.writerow(["Camera Name", "Total Inbound", "Video Start Time Processed (HH:MM:SS)", "Video End Time Processed (HH:MM:SS)", "Run Timestamp", "Manual Hour Offset"])
                 # --- END NEW ---
                 
-                start_str = format_seconds(video_start_time_processed)
-                end_str = format_seconds(video_end_time_processed)
+                start_str = format_seconds(video_start_time_processed, video_hour)
+                end_str = format_seconds(video_end_time_processed, video_hour)
                 hour_offset_str = str(args.video_hour) if args.video_hour is not None else ""
                 
                 # --- NEW: เพิ่ม Data Hour Offset ---
