@@ -79,10 +79,21 @@ def ensure_dir(dir_path):
     if not os.path.exists(dir_path): os.makedirs(dir_path); print(f"Created directory: {dir_path}")
 
 # --- NEW: Helper สำหรับแปลงวินาทีเป็น HH:MM:SS ---
-def format_seconds(seconds):
+def format_seconds(seconds, hour_offset=None):
     """แปลงวินาที (float) เป็น string 'HH:MM:SS'"""
     if seconds is None: return "N/A"
-    return str(timedelta(seconds=int(seconds)))
+    
+    total_seconds = int(seconds)
+    
+    # ถ้ามี hour_offset ให้ใช้เป็นชั่วโมง
+    if hour_offset is not None:
+        # คำนวณนาทีและวินาทีที่เหลือ (โดยไม่สนชั่วโมงของ video time)
+        minutes = (total_seconds % 3600) // 60
+        seconds_rem = total_seconds % 60
+        return f"{hour_offset:02d}:{minutes:02d}:{seconds_rem:02d}"
+    else:
+        # ถ้าไม่มี ให้แปลงตามปกติ
+        return str(timedelta(seconds=total_seconds))
 # --- END NEW ---
 
 def is_crossing_line(p1, p2, a, b):
@@ -118,14 +129,25 @@ def is_crossing_line(p1, p2, a, b):
 
 # ====================== MAIN LOGIC =========================
 def main():
-    # --- MODIFIED: เพิ่ม Arguments สำหรับ Time Range (ใช้ นาที) ---
+    # --- MODIFIED: เพิ่ม Arguments สำหรับ Time Range (ใช้ นาที) และ Hour Offset ---
     parser = argparse.ArgumentParser(description="Person Counter (Summary Log + Time Range)")
     parser.add_argument("camera_name", help="Name of the camera config.")
     parser.add_argument("--start_min", type=int, default=0, help="Start processing at this minute in the video (default: 0)")
     parser.add_argument("--duration_min", type=int, default=None, help="Process for this many minutes (default: process until end of video)")
+    # --- NEW: เพิ่ม Argument สำหรับ Hour Offset ---
+    parser.add_argument("--video_hour", type=int, default=None, help="Manual hour (e.g., 18) to use for the Log file")
+    # --- END NEW ---
     args = parser.parse_args()
     # --- END MODIFIED ---
 
+    # --- NEW: รับ Input Hour แบบ Interactive ---
+    video_hour_str = input("Enter manual hour offset (e.g., 18) or press Enter to skip: ")
+    video_hour = None
+    if video_hour_str.isdigit():
+        video_hour = int(video_hour_str)
+    print("---------------------------------")
+    # --- END NEW ---
+    
     # --- Load Config ---
     try:
         with open(CONFIG_FILE,"r",encoding='utf-8') as f: full_config=json.load(f)
@@ -165,11 +187,9 @@ def main():
     counts={"inbound":0}; person_states={}; next_pid=1
     tid_to_pid = {}
     
-    # --- MODIFIED: นำ Logic การกำหนดฝั่ง (Sign) กลับมา ---
     neg_is_bottom_red=make_side_label(red_line[0],red_line[1])
     bottom_sign=-1 if neg_is_bottom_red else 1; top_sign=-bottom_sign
-    # --- END MODIFIED ---
-    
+
     # --- Mouse Callback (FIXED) ---
     CONFIG_HELPER_FILE = "config/config_points.txt"
     def _on_mouse(event, x, y, flags, param):
@@ -192,8 +212,10 @@ def main():
     last_frame = None
 
     try:
+        # --- MODIFIED: เปิดไฟล์ Event Log (เพิ่ม Header ใหม่) ---
         with open(event_log_path, "w", newline="", encoding='utf-8') as csv_file:
-            csvw = csv.writer(csv_file, delimiter=','); csvw.writerow(["Video Time (HH:MM:SS)","Camera Name","PID","Status"])
+            csvw = csv.writer(csv_file, delimiter=','); csvw.writerow(["Video Time (HH:MM:SS)","Camera Name","PID","Status", "Hour (Manual)"])
+            # --- END MODIFIED ---
 
             while True:
                 current_time_dt = datetime.now()
@@ -235,55 +257,44 @@ def main():
                     if valid_results: tracks=tracker.update(np.array(dets) if dets else np.empty((0,5)))
                     live_tids = {int(t[4]) for t in tracks}
 
-                    # --- State Machine & Re-ID Logic (REVISED - Back to Sign History) ---
+                    # --- State Machine & Re-ID Logic ---
                     processed_pids_this_frame = set()
                     for x1, y1, x2, y2, tid in tracks:
                         tid, bbox = int(tid), (int(x1), int(y1), int(x2), int(y2))
                         cur_pos = np.array([(x1 + x2) / 2, y1])
                         pid = tid_to_pid.get(tid)
-                        
                         if pid is None or pid not in person_states:
                             pid = next_pid; next_pid += 1
                             tid_to_pid[tid] = pid
-                            # --- MODIFIED: เพิ่ม 'sign_history' ---
-                            person_states[pid] = {'state': 'waiting', 
-                                                  'sign_history': deque(maxlen=SIGN_HISTORY_LENGTH), 
+                            # --- MODIFIED: เพิ่ม 'dot_color' ---
+                            person_states[pid] = {'state': 'waiting', 'sign_history': deque(maxlen=SIGN_HISTORY_LENGTH), 
                                                   'last_frame_seen': frame.copy(), 'last_bbox': bbox, 
                                                   'last_pos': cur_pos, 'last_tid': tid, 
-                                                  'last_seen_time': current_time_dt}
-                        
+                                                  'last_seen_time': current_time_dt, 'prev_pos': None,
+                                                  'dot_color': (0, 0, 255)} # สีแดง BGR
                         st = person_states[pid]
                         st['tid'] = tid; st['last_bbox'] = bbox; st['last_frame_seen'] = frame.copy()
                         st['last_pos'] = cur_pos; st['last_seen_time'] = current_time_dt
                         processed_pids_this_frame.add(pid)
+                        prev_pos = st.get('prev_pos')
 
-                        # --- MODIFIED: ใช้ Logic Sign History ---
-                        current_sign = _cross_sign(cur_pos, red_line[0], red_line[1])
-                        if current_sign != 0: st['sign_history'].append(current_sign) # ไม่เก็บ sign 0
-                        history = list(st['sign_history'])
-
-                        crossed_top_to_bottom=False; crossed_bottom_to_top=False
-                        if len(history)>=2:
-                            prev_s, last_s = history[-2], history[-1]
-                            # เช็คว่าเปลี่ยนจาก Top -> Bottom
-                            if prev_s==top_sign and last_s==bottom_sign:
-                                crossed_top_to_bottom=True
-                            # เช็คว่าเปลี่ยนจาก Bottom -> Top
-                            elif prev_s==bottom_sign and last_s==top_sign:
-                                crossed_bottom_to_top=True
-
-                        if st['state'] == 'waiting' and crossed_top_to_bottom: 
-                            st['state']='crossed_red'
-                            print(f"PID {pid}: State -> crossed_red (Sign Hist)") # Debug
-                        elif st['state'] == 'crossed_red' and crossed_bottom_to_top: 
-                            st['state']='waiting'
-                            print(f"PID {pid}: State -> waiting (Crossed back)") # Debug
-                        # --- END MODIFIED ---
+                        if prev_pos is not None:
+                            crossed = is_crossing_line(prev_pos, cur_pos, red_line[0], red_line[1])
+                            if st['state'] == 'waiting' and crossed and cur_pos[1] > prev_pos[1]:
+                                st['state'] = 'crossed_red'
+                                st['dot_color'] = (0, 255, 0) # --- NEW: เปลี่ยนเป็นสีเขียว ---
+                            elif st['state'] == 'crossed_red' and crossed and cur_pos[1] < prev_pos[1]:
+                                st['state'] = 'waiting'
+                                st['dot_color'] = (0, 0, 255) # --- NEW: เปลี่ยนกลับเป็นสีแดง ---
                         
-                        # --- Drawing ---
+                        st['prev_pos'] = cur_pos.copy()
+
+                        # --- MODIFIED: ใช้ dot_color จาก state ---
+                        dot_color = st.get('dot_color', (0, 0, 255)) # Default สีแดง
                         cv2.rectangle(frame,(bbox[0],bbox[1]),(bbox[2],bbox[3]),(255,255,0),2)
                         cv2.putText(frame,f'PID:{pid} ({st["state"]})',(bbox[0],max(20,bbox[1]-5)),cv2.FONT_HERSHEY_SIMPLEX,0.5,(255,255,255),1)
-                        cv2.circle(frame,(int(cur_pos[0]),int(cur_pos[1])),5,(0,0,255),-1)
+                        cv2.circle(frame,(int(cur_pos[0]),int(cur_pos[1])),5, dot_color,-1) # ใช้ dot_color
+                        # --- END MODIFIED ---
 
                     # --- Process Disappeared People & Cleanup ---
                     pids_to_remove = set()
@@ -294,7 +305,11 @@ def main():
                                  counts['inbound'] += 1
                                  video_time_str = format_seconds(current_video_sec)
                                  print(f"PID {pid}: Exited -> COUNT = {counts['inbound']} (Video Time: {video_time_str})")
-                                 csvw.writerow([video_time_str, args.camera_name, pid, 'entrance'])
+                                 
+                                 # --- NEW: เพิ่ม hour_offset ใน Log ---
+                                 hour_offset_str = str(args.video_hour) if args.video_hour is not None else ""
+                                 csvw.writerow([video_time_str, args.camera_name, pid, 'entrance', hour_offset_str])
+                                 # --- END NEW ---
                                  
                                  last_frame_s = st.get('last_frame_seen')
                                  if last_frame_s is not None:
@@ -330,7 +345,14 @@ def main():
                 cv2.line(frame, blue_line[0], blue_line[1], (255,0,0), 2)
                 cv2.line(frame, green_line[0], green_line[1], (0,255,0), 2)
                 cv2.line(frame, yellow_line[0], yellow_line[1], (0,255,255), 2)
-                cv2.putText(frame, f"Extrance: {counts['inbound']}", (10, original_h - 40), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+                
+                # --- MODIFIED: เพิ่ม Video Time (HH:MM:SS) ใต้ Inbound ---
+                inbound_text = f"Entrance: {counts['inbound']}" # แก้ไขคำว่า "Extrance"
+                video_time_text = f"Video Time: {format_seconds(current_video_sec)}"
+                cv2.putText(frame, inbound_text, (10, original_h - 40), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+                cv2.putText(frame, video_time_text, (10, original_h - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2) # แสดงเวลาด้านล่าง
+                # --- END MODIFIED ---
+                
                 if display_timestamp_str:
                      try:
                           font_scale=0.6; thickness=1; font=cv2.FONT_HERSHEY_SIMPLEX; text_x,text_y=10,30
@@ -339,6 +361,7 @@ def main():
                           if by2>by1 and bx2>bx1: cv2.rectangle(frame,(bx1,by1),(bx2,by2),(0,0,0),-1)
                      except: pass
                 cv2.putText(frame, display_timestamp_str, (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,255,255), 1)
+                
                 if mouse_pos_raw[0]>=0 and paused:
                     cv2.drawMarker(frame,(mouse_pos_raw[0],mouse_pos_raw[1]),(0,255,255), cv2.MARKER_CROSS,20,2)
                     text=f"x:{mouse_pos_raw[0]} y:{mouse_pos_raw[1]}"; cv2.putText(frame,text,(mouse_pos_raw[0]+15,mouse_pos_raw[1]-15),cv2.FONT_HERSHEY_SIMPLEX,0.6,(0,255,255),2)
@@ -350,16 +373,29 @@ def main():
             
     except KeyboardInterrupt:
         print("\nUser interrupted process (Ctrl+C).")
+        # --- NEW: บันทึกเวลา OCR สุดท้าย แม้จะกด Ctrl+C ---
+        try:
+             video_end_time_processed = cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
+        except:
+             pass # ถ้า cap ปิดไปแล้ว
+        # --- END NEW ---
     finally:
         # --- บันทึก Summary Log ---
         print("\n--- Writing Summary Log ---")
         try:
             with open(summary_log_path, "w", newline="", encoding='utf-8') as summary_f:
                 summary_csvw = csv.writer(summary_f, delimiter=',')
-                summary_csvw.writerow(["Camera Name", "Total Inbound", "Video Start Time Processed (HH:MM:SS)", "Video End Time Processed (HH:MM:SS)", "Run Timestamp"])
+                # --- NEW: เพิ่ม Header Hour Offset ---
+                summary_csvw.writerow(["Camera Name", "Total Inbound", "Video Start Time Processed (HH:MM:SS)", "Video End Time Processed (HH:MM:SS)", "Run Timestamp", "Manual Hour Offset"])
+                # --- END NEW ---
+                
                 start_str = format_seconds(video_start_time_processed)
                 end_str = format_seconds(video_end_time_processed)
-                summary_csvw.writerow([args.camera_name, counts["inbound"], start_str, end_str, current_run_timestamp])
+                hour_offset_str = str(args.video_hour) if args.video_hour is not None else ""
+                
+                # --- NEW: เพิ่ม Data Hour Offset ---
+                summary_csvw.writerow([args.camera_name, counts["inbound"], start_str, end_str, current_run_timestamp, hour_offset_str])
+                # --- END NEW ---
             print(f"Saved summary log to: {summary_log_path}")
         except Exception as e: print(f"Error writing summary log: {e}")
         
