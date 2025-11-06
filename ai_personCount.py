@@ -283,6 +283,7 @@ def main():
                             if st['state'] == 'waiting' and crossed and cur_pos[1] > prev_pos[1]:
                                 st['state'] = 'crossed_red'
                                 st['dot_color'] = (0, 255, 0) # --- NEW: เปลี่ยนเป็นสีเขียว ---
+                                st['cross_time_sec'] = current_video_sec # <--- **เพิ่มบรรทัดนี้**
                             elif st['state'] == 'crossed_red' and crossed and cur_pos[1] < prev_pos[1]:
                                 st['state'] = 'waiting'
                                 st['dot_color'] = (0, 0, 255) # --- NEW: เปลี่ยนกลับเป็นสีแดง ---
@@ -303,7 +304,12 @@ def main():
                         if pid not in processed_pids_this_frame:
                             if st['state'] == 'crossed_red':
                                  counts['inbound'] += 1
-                                 video_time_str = format_seconds(current_video_sec, video_hour)
+                                 
+                                 # --- MODIFIED: ดึงเวลาตอน "ข้ามเส้น" มาใช้ ---
+                                 log_time_sec = st.get('cross_time_sec', current_video_sec) # 1. ดึงเวลาที่เก็บไว้ (ถ้าไม่มีจริงๆ ค่อยใช้เวลาปัจจุบัน)
+                                 video_time_str = format_seconds(log_time_sec, video_hour) 
+                                 # --- END MODIFIED ---
+                                 
                                  print(f"PID {pid}: Exited -> COUNT = {counts['inbound']} (Video Time: {video_time_str})")
                                  
                                  # --- NEW: เพิ่ม hour_offset ใน Log ---
