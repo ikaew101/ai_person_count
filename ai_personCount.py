@@ -141,9 +141,10 @@ def main():
     # --- END MODIFIED ---
 
     # --- NEW: รับ Input Hour แบบ Interactive ---
-    video_hour_str = input("Enter manual hour offset (e.g., 18) or press Enter to skip: ")
     video_hour = None
-    if video_hour_str.isdigit():
+    if args.video_hour is not None: video_hour = int(args.video_hour)
+    else: 
+        video_hour_str = input("Enter manual hour offset (e.g., 18) or press Enter to skip: ")
         video_hour = int(video_hour_str)
     print("---------------------------------")
     # --- END NEW ---
@@ -172,6 +173,12 @@ def main():
     event_log_path = os.path.join(log_dir, f"event_log_{args.camera_name}_{current_run_timestamp}.csv")
     summary_log_path = os.path.join(run_output_dir, f"summary_log_{args.camera_name}_{current_run_timestamp}.csv") # ไฟล์สรุป
     
+    # --- NEW: กำหนด Path สำหรับ Master Log File ---
+    today_date_str = datetime.now().strftime('%Y%m%d')
+    master_log_filename = f"validation_{today_date_str}.csv"
+    master_log_path = os.path.join(BASE_OUTPUT_DIR, master_log_filename)
+    # --- END NEW ---
+
     print(f"--- Starting Run ---")
     print(f"Event Log: {event_log_path}"); print(f"Snapshots: {person_snapshot_dir}"); print(f"Summary Log: {summary_log_path}")
     # --- END MODIFIED ---
@@ -207,14 +214,13 @@ def main():
     # --- END FIX ---
     
     video_start_time_processed = None
-    video_end_time_processed = None
-    
     last_frame = None
 
     try:
         # --- MODIFIED: เปิดไฟล์ Event Log (เพิ่ม Header ใหม่) ---
         with open(event_log_path, "w", newline="", encoding='utf-8') as csv_file:
-            csvw = csv.writer(csv_file, delimiter=','); csvw.writerow(["Video Time (HH:MM:SS)","Camera Name","PID","Status", "Hour (Manual)"])
+            csvw = csv.writer(csv_file, delimiter=','); 
+            csvw.writerow(["Camera Name","Start Time","End Time","TraceID","Status"])
             # --- END MODIFIED ---
 
             while True:
@@ -305,18 +311,35 @@ def main():
                             if st['state'] == 'crossed_red':
                                  counts['inbound'] += 1
                                  
-                                 # --- MODIFIED: ดึงเวลาตอน "ข้ามเส้น" มาใช้ ---
-                                 log_time_sec = st.get('cross_time_sec', current_video_sec) # 1. ดึงเวลาที่เก็บไว้ (ถ้าไม่มีจริงๆ ค่อยใช้เวลาปัจจุบัน)
-                                 video_time_str = format_seconds(log_time_sec, video_hour) 
-                                 # --- END MODIFIED ---
-                                 
+                                 # --- MODIFIED: ใช้เวลา "ข้ามเส้น" (Cross Time) ที่เก็บไว้ ---
+                                 cross_time_sec = st.get('cross_time_sec', current_video_sec) # 1. ดึงเวลาที่ข้ามเส้น
+                                 exit_time_sec = current_video_sec # 2. เวลาปัจจุบันคือเวลาที่หายไป
+
+                                 # จัดรูปแบบเวลาทั้งสอง
+                                 cross_time_str = format_seconds(cross_time_sec, video_hour)
+                                 exit_time_str = format_seconds(exit_time_sec, video_hour)
+
+                                 video_time_str = format_seconds(cross_time_sec, video_hour) 
                                  print(f"PID {pid}: Exited -> COUNT = {counts['inbound']} (Video Time: {video_time_str})")
+                                 csvw.writerow([args.camera_name, cross_time_str, exit_time_str, pid, 'entrance'])
+                                 # --- NEW: บันทึกลง Master Validation Log ---
+                                 try:
+                                     # ตรวจสอบว่าไฟล์ Master Log มี Header หรือยัง (ถ้าเพิ่งสร้าง)
+                                     file_exists = os.path.isfile(master_log_path)
+                                     
+                                     with open(master_log_path, "a", newline="", encoding='utf-8') as master_f:
+                                         master_csvw = csv.writer(master_f, delimiter=',')
+                                         
+                                         if not file_exists:
+                                             master_csvw.writerow(["Camera Name", "Start Time", "End Time", "TraceID", "Status"]) # เขียน Header
+                                             
+                                         # เขียนข้อมูล (4 columns ตามที่คุณต้องการ)
+                                         master_csvw.writerow([args.camera_name, cross_time_str, exit_time_str, pid, 'entrance'])
                                  
-                                 # --- NEW: เพิ่ม hour_offset ใน Log ---
-                                 hour_offset_str = str(args.video_hour) if args.video_hour is not None else ""
-                                 csvw.writerow([video_time_str, args.camera_name, pid, 'entrance', hour_offset_str])
+                                 except Exception as e:
+                                     print(f"Error writing to Master Log: {e}")
                                  # --- END NEW ---
-                                 
+
                                  last_frame_s = st.get('last_frame_seen')
                                  if last_frame_s is not None:
                                       frame_s = last_frame_s.copy()
@@ -325,10 +348,12 @@ def main():
                                       cv2.line(frame_s, blue_line[0], blue_line[1], (255,0,0), 2)
                                       cv2.line(frame_s, green_line[0], green_line[1], (0,255,0), 2)
                                       cv2.line(frame_s, yellow_line[0], yellow_line[1], (0,255,255), 2)
+                                      
                                       last_bb = st.get('last_bbox')
                                       if last_bb: cv2.rectangle(frame_s,(last_bb[0],last_bb[1]),(last_bb[2],last_bb[3]),(0,255,0),3)
-                                      video_time_fname = f"{int(current_video_sec // 3600):02d}h{int((current_video_sec % 3600) // 60):02d}m{int(current_video_sec % 60):02d}s"
+                                      video_time_fname = f"{int(cross_time_sec // 3600):02d}h{int((cross_time_sec % 3600) // 60):02d}m{int(cross_time_sec % 60):02d}s"
                                       snap_f = os.path.join(person_snapshot_dir, f"inbound_pid{pid}_{video_time_fname}.jpg")
+
                                       cv2.imwrite(snap_f, frame_s); print(f"Saved snapshot: {os.path.basename(snap_f)}")
                                       st['state'] = 'counted'
                                  else: print(f"Warn: No snapshot for PID {pid}.")
@@ -386,28 +411,28 @@ def main():
              pass # ถ้า cap ปิดไปแล้ว
         # --- END NEW ---
     finally:
-        # --- บันทึก Summary Log ---
-        print("\n--- Writing Summary Log ---")
-        try:
-            with open(summary_log_path, "w", newline="", encoding='utf-8') as summary_f:
-                summary_csvw = csv.writer(summary_f, delimiter=',')
-                # --- NEW: เพิ่ม Header Hour Offset ---
-                summary_csvw.writerow(["Camera Name", "Total Inbound", "Video Start Time Processed (HH:MM:SS)", "Video End Time Processed (HH:MM:SS)", "Run Timestamp", "Manual Hour Offset"])
-                # --- END NEW ---
+        # # --- บันทึก Summary Log ---
+        # print("\n--- Writing Summary Log ---")
+        # try:
+        #     with open(summary_log_path, "w", newline="", encoding='utf-8') as summary_f:
+        #         summary_csvw = csv.writer(summary_f, delimiter=',')
+        #         # --- NEW: เพิ่ม Header Hour Offset ---
+        #         summary_csvw.writerow(["Camera Name", "Total Inbound", "Video Start Time Processed (HH:MM:SS)", "Video End Time Processed (HH:MM:SS)", "Run Timestamp"])
+        #         # --- END NEW ---
                 
-                start_str = format_seconds(video_start_time_processed, video_hour)
-                end_str = format_seconds(video_end_time_processed, video_hour)
-                hour_offset_str = str(args.video_hour) if args.video_hour is not None else ""
+        #         start_str = format_seconds(video_start_time_processed, video_hour)
+        #         end_str = format_seconds(video_end_time_processed, video_hour)
+        #         hour_offset_str = str(args.video_hour) if args.video_hour is not None else ""
                 
-                # --- NEW: เพิ่ม Data Hour Offset ---
-                summary_csvw.writerow([args.camera_name, counts["inbound"], start_str, end_str, current_run_timestamp, hour_offset_str])
-                # --- END NEW ---
-            print(f"Saved summary log to: {summary_log_path}")
-        except Exception as e: print(f"Error writing summary log: {e}")
+        #         # --- NEW: เพิ่ม Data Hour Offset ---
+        #         summary_csvw.writerow([args.camera_name, counts["inbound"], start_str, end_str, current_run_timestamp])
+        #         # --- END NEW ---
+        #     print(f"Saved summary log to: {summary_log_path}")
+        # except Exception as e: print(f"Error writing summary log: {e}")
         
-        if 'csv_file' in locals() and csv_file is not None and not csv_file.closed:
-            csv_file.close()
-            print("Closed event log file.")
+        # if 'csv_file' in locals() and csv_file is not None and not csv_file.closed:
+        #     csv_file.close()
+        #     print("Closed event log file.")
         cap.release()
         cv2.destroyAllWindows()
         print("Process finished.")
