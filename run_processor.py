@@ -56,10 +56,6 @@ def upload_file(service, local_file_path, remote_folder_id):
     file_name = os.path.basename(local_file_path)
     print(f"Uploading '{file_name}' to Drive...")
     try:
-        file_metadata = {
-            'name': file_name,
-            'parents': [remote_folder_id]
-        }
         media = MediaFileUpload(local_file_path, resumable=True)
 
         # ตรวจสอบว่ามีไฟล์ชื่อนี้อยู่แล้วหรือไม่ (เพื่ออัปเดตแทนการสร้างซ้ำ)
@@ -68,18 +64,38 @@ def upload_file(service, local_file_path, remote_folder_id):
         files = response.get('files', [])
 
         if files:
-            # ถ้ามี -> อัปเดตไฟล์เดิม
+            # --- (แก้ไข) ---
+            # ไฟล์มีอยู่แล้ว -> อัปเดต
+            # เราจะส่ง Body ที่มีแค่ 'name' (ห้ามส่ง 'parents')
+            update_metadata = {'name': file_name}
             file_id = files[0].get('id')
-            service.files().update(fileId=file_id, body=file_metadata, media_body=media).execute()
+            
+            service.files().update(
+                fileId=file_id,
+                body=update_metadata, # <--- ใช้ metadata ที่ไม่มี 'parents'
+                media_body=media
+            ).execute()
             print(f"Updated '{file_name}' in Drive.")
+            # --- (สิ้นสุดการแก้ไข) ---
+            
         else:
-            # ถ้าไม่มี -> สร้างไฟล์ใหม่
-            service.files().create(body=file_metadata, media_body=media).execute()
+            # --- (เหมือนเดิม) ---
+            # ไฟล์ไม่มี -> สร้างใหม่
+            # เราต้องส่ง 'parents' ใน Body
+            create_metadata = {
+                'name': file_name,
+                'parents': [remote_folder_id]
+            }
+            service.files().create(
+                body=create_metadata, # <--- ใช้ metadata ที่มี 'parents'
+                media_body=media
+            ).execute()
             print(f"Created '{file_name}' in Drive.")
+            # --- (สิ้นสุดส่วนเหมือนเดิม) ---
 
     except Exception as e:
         print(f"Error uploading {file_name}: {e}")
-
+        
 def upload_folder_recursive(service, local_folder, remote_parent_folder_id):
     """อัปโหลดทุกอย่างในโฟลเดอร์ (รวมถึงโฟลเดอร์ย่อย)"""
     print(f"\nUploading contents of '{local_folder}'...")
@@ -140,67 +156,67 @@ def main_processor():
             break
         
         task_to_run = find_next_task(tasks)
-        
-        if task_to_run is None: 
+        if task_to_run is None:
             print("All AI tasks completed.")
 
             print("\n===========================================")
             print("🚀 Starting Data Validation step...")
             print("===========================================")
             try:
-                # สั่งรันฟังก์ชันหลักจากไฟล์ csv_validator.py
                 csv_validator.process_data_validation()
                 print("✅ Validation step completed successfully.")
             except Exception as e:
                 print(f"!!! ERROR during validation step: {e}")
 
-        print("\n===========================================")
-        print("🚀 Starting Google Drive Upload step...")
-        print("===========================================")
-        try:
-            service = google_auth.get_drive_service()
-            if service:
-                # 1. หา ID โฟลเดอร์หลัก
-                base_id = find_or_create_folder(service, "TDG-QA Zonemall")
+            # --- 🔽 บล็อกนี้ทั้งหมดต้อง "ย่อหน้า" เข้ามา ---
+            print("\n===========================================")
+            print("🚀 Starting Google Drive Upload step...")
+            print("===========================================")
+            try:
+                service = google_auth.get_drive_service()
+                if service:
+                    # 1. หา ID โฟลเดอร์หลัก
+                    base_id = find_or_create_folder(service, "TDG-QA Zonemall")
 
-                # 2. หา ID โฟลเดอร์ QA Camera
-                qa_camera_id = find_or_create_folder(service, "QA Camera", base_id)
+                    # 2. หา ID โฟลเดอร์ QA Camera
+                    qa_camera_id = find_or_create_folder(service, "QA Camera", base_id)
 
-                # 3. หา ID โฟลเดอร์ย่อย
-                output_id = find_or_create_folder(service, "Output", qa_camera_id)
-                camera_id = find_or_create_folder(service, "Camera", qa_camera_id)
-                ai_result_id = find_or_create_folder(service, "AI Result", qa_camera_id)
+                    # 3. หา ID โฟลเดอร์ย่อย
+                    output_id = find_or_create_folder(service, "Output", qa_camera_id)
+                    camera_id = find_or_create_folder(service, "Camera", qa_camera_id)
+                    ai_result_id = find_or_create_folder(service, "AI Result", qa_camera_id)
 
-                # 4. อัปโหลดไฟล์และโฟลเดอร์
+                    # 4. อัปโหลดไฟล์และโฟลเดอร์
 
-                # 4.1 อัปโหลด master_video_log.csv
-                upload_file(service, MASTER_LOG_FILE, qa_camera_id) #
+                    # 4.1 อัปโหลด master_video_log.csv
+                    upload_file(service, MASTER_LOG_FILE, qa_camera_id) #
 
-                # 4.2 อัปโหลดโฟลเดอร์ AI Result (หาไฟล์ validation_{date}.csv)
-                ai_result_path = "qa_camera_check/ai_result" #
-                for f_name in os.listdir(ai_result_path):
-                    if "validation_" in f_name and f_name.endswith(".csv"):
-                        upload_file(service, os.path.join(ai_result_path, f_name), ai_result_id)
+                    # 4.2 อัปโหลดโฟลเดอร์ AI Result (หาไฟล์ validation_{date}.csv)
+                    ai_result_path = "qa_camera_check/ai_result" #
+                    for f_name in os.listdir(ai_result_path):
+                        if "validation_" in f_name and f_name.endswith(".csv"):
+                            upload_file(service, os.path.join(ai_result_path, f_name), ai_result_id)
 
-                # 4.3 อัปโหลดโฟลเดอร์ Output (แบบไม่ recursive เพราะมีแต่ไฟล์)
-                output_path = "qa_camera_check/output" #
-                for f_name in os.listdir(output_path):
-                    f_path = os.path.join(output_path, f_name)
-                    if os.path.isfile(f_path):
-                        upload_file(service, f_path, output_id)
+                    # 4.3 อัปโหลดโฟลเดอร์ Output (แบบไม่ recursive เพราะมีแต่ไฟล์)
+                    output_path = "qa_camera_check/output" #
+                    for f_name in os.listdir(output_path):
+                        f_path = os.path.join(output_path, f_name)
+                        if os.path.isfile(f_path):
+                            upload_file(service, f_path, output_id)
 
-                # 4.4 อัปโหลดโฟลเดอร์ Camera (แบบ Recursive)
-                # (เราจะอัปโหลดทั้งโฟลเดอร์ 'camera' ไปไว้ใน 'Camera')
-                upload_folder_recursive(service, "qa_camera_check/camera", qa_camera_id)
+                    # 4.4 อัปโหลดโฟลเดอร์ Camera (แบบ Recursive)
+                    # (เราจะอัปโหลดทั้งโฟลเดอร์ 'camera' ไปไว้ใน 'Camera')
+                    upload_folder_recursive(service, "qa_camera_check/camera", qa_camera_id)
 
-                print("✅ Google Drive Upload completed.")
-            else:
-                print("!!! ERROR: Could not connect to Google Drive for upload.")
-        except Exception as e:
-            print(f"!!! ERROR during Google Drive Upload step: {e}")
+                    print("✅ Google Drive Upload completed.")
+                else:
+                    print("!!! ERROR: Could not connect to Google Drive for upload.")
+            except Exception as e:
+                print(f"!!! ERROR during Google Drive Upload step: {e}")
+
             print("All processes finished. Exiting.")
-            break # จบการทำงานของ while True
-                
+            break # 
+            
         task_camera_name = task_to_run['camera_name']
         print(f"\n===========================================")
         print(f"Found task: '{task_camera_name}' (Status: {task_to_run['status']})")
