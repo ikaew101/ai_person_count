@@ -3,7 +3,9 @@ import csv
 import subprocess
 import sys
 import time
-import json # (เพิ่ม)
+import json
+import csv_validator
+import generate_master_log
 
 MASTER_LOG_FILE = 'qa_camera_check/master_video_log.csv'
 CONFIG_FILE = 'config/camera_config.json'
@@ -60,10 +62,22 @@ def main_processor():
         
         task_to_run = find_next_task(tasks)
         
-        if task_to_run is None:
-            print("All tasks completed. Exiting.")
-            break
-            
+        if task_to_run is None: 
+            print("All AI tasks completed.")
+
+            print("\n===========================================")
+            print("🚀 Starting Data Validation step...")
+            print("===========================================")
+            try:
+                # สั่งรันฟังก์ชันหลักจากไฟล์ csv_validator.py
+                csv_validator.process_data_validation()
+                print("✅ Validation step completed successfully.")
+            except Exception as e:
+                print(f"!!! ERROR during validation step: {e}")
+
+            print("All processes finished. Exiting.")
+            break # จบการทำงานของ while True
+                
         task_camera_name = task_to_run['camera_name']
         print(f"\n===========================================")
         print(f"Found task: '{task_camera_name}' (Status: {task_to_run['status']})")
@@ -85,11 +99,11 @@ def main_processor():
             ]
             
             # --- (ตัวอย่าง) การเพิ่ม Arguments ถ้าคุณเก็บไว้ใน Config ---
-            # cam_config = camera_configs.get(task_camera_name, {})
-            # if cam_config.get("start_min"):
-            #     command.extend(["--start_min", str(cam_config["start_min"])])
-            # if cam_config.get("duration_min"):
-            #     command.extend(["--duration_min", str(cam_config["duration_min"])])
+            cam_config = camera_configs.get(task_camera_name, {})
+            if cam_config.get("start_min"):
+                command.extend(["--start_min", str(cam_config["start_min"])])
+            if cam_config.get("duration_min"):
+                command.extend(["--duration_min", str(cam_config["duration_min"])])
 
             
             # รันและรอจนจบ
@@ -137,7 +151,25 @@ def main_processor():
 
 if __name__ == "__main__":
     if not os.path.exists(MASTER_LOG_FILE):
-        print(f"Error: '{MASTER_LOG_FILE}' not found.")
-        print("Please run 'python generate_master_log.py' first to create the task list.")
+        print(f"Warning: '{MASTER_LOG_FILE}' not found.")
+        print("Attempting to run 'generate_master_log.py' automatically...")
+        
+        try:
+            # 1. เรียกฟังก์ชัน create_master_log จากไฟล์ที่ import มา
+            generate_master_log.create_master_log()
+            
+            # 2. ตรวจสอบอีกครั้งว่าไฟล์ถูกสร้างสำเร็จหรือไม่
+            if os.path.exists(MASTER_LOG_FILE):
+                print(f"Successfully generated '{MASTER_LOG_FILE}'.")
+                print("Proceeding with processor...")
+                main_processor() # 3. ถ้าสำเร็จ ก็เริ่มทำงานหลักต่อ
+            else:
+                print(f"!!! ERROR: 'generate_master_log.py' ran but failed to create the file.")
+                print("Please check 'config/camera_config.json' and permissions.")
+
+        except Exception as e:
+            print(f"!!! FAILED to run 'generate_master_log.py': {e}")
+            print("Please fix 'generate_master_log.py' or 'config/camera_config.json' and try again.")
     else:
+        print("Master log found. Starting processor...")
         main_processor()

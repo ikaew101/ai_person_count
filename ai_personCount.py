@@ -26,6 +26,7 @@ except ImportError:
 # --- การตั้งค่าที่สำคัญ ---
 CONFIG_FILE = 'config/camera_config.json'
 BASE_OUTPUT_DIR = "qa_camera_check" # โฟลเดอร์หลัก
+BASE_OUTPUT_RESULT = "qa_camera_check/ai_result" # โฟลเดอร์หลัก
 SIGN_HISTORY_LENGTH = 3
 # --- REMOVED: INTERVAL_MINUTES ---
 
@@ -143,9 +144,9 @@ def main():
     # --- NEW: รับ Input Hour แบบ Interactive ---
     video_hour = None
     if args.video_hour is not None: video_hour = int(args.video_hour)
-    else: 
-        video_hour_str = input("Enter manual hour offset (e.g., 18) or press Enter to skip: ")
-        video_hour = int(video_hour_str)
+    # else: 
+    #     video_hour_str = input("Enter manual hour offset (e.g., 18) or press Enter to skip: ")
+    #     video_hour = int(video_hour_str)
     print("---------------------------------")
     # --- END NEW ---
     
@@ -165,7 +166,7 @@ def main():
     timestamp_roi=config.get('timestamp_roi')
 
     # --- MODIFIED: สร้าง Path สำหรับการรันครั้งนี้ ---
-    run_output_dir = os.path.join(BASE_OUTPUT_DIR, args.camera_name, current_run_timestamp)
+    run_output_dir = os.path.join(BASE_OUTPUT_DIR,"camera", args.camera_name, current_run_timestamp)
     log_dir = os.path.join(run_output_dir, "logs")
     person_snapshot_dir = os.path.join(run_output_dir, "person_snapshots")
     ensure_dir(log_dir); ensure_dir(person_snapshot_dir)
@@ -176,7 +177,7 @@ def main():
     # --- NEW: กำหนด Path สำหรับ Master Log File ---
     today_date_str = datetime.now().strftime('%Y%m%d')
     master_log_filename = f"validation_{today_date_str}.csv"
-    master_log_path = os.path.join(BASE_OUTPUT_DIR, master_log_filename)
+    master_log_path = os.path.join(BASE_OUTPUT_RESULT, master_log_filename)
     # --- END NEW ---
 
     print(f"--- Starting Run ---")
@@ -220,7 +221,7 @@ def main():
         # --- MODIFIED: เปิดไฟล์ Event Log (เพิ่ม Header ใหม่) ---
         with open(event_log_path, "w", newline="", encoding='utf-8') as csv_file:
             csvw = csv.writer(csv_file, delimiter=','); 
-            csvw.writerow(["Camera Name","Start Time","End Time","TraceID","Status"])
+            csvw.writerow(["Cam_name","Timestamp","End_Time","TraceID","Status"])
             # --- END MODIFIED ---
 
             while True:
@@ -324,6 +325,10 @@ def main():
                                  csvw.writerow([args.camera_name, cross_time_str, exit_time_str, pid, 'entrance'])
                                  # --- NEW: บันทึกลง Master Validation Log ---
                                  try:
+                                     # หา Path ของโฟลเดอร์จากชื่อไฟล์
+                                     master_log_dir = os.path.dirname(master_log_path) #
+                                     ensure_dir(master_log_dir) # <-- ใช้ฟังก์ชันที่มีอยู่แล้ว
+                                     
                                      # ตรวจสอบว่าไฟล์ Master Log มี Header หรือยัง (ถ้าเพิ่งสร้าง)
                                      file_exists = os.path.isfile(master_log_path)
                                      
@@ -331,7 +336,7 @@ def main():
                                          master_csvw = csv.writer(master_f, delimiter=',')
                                          
                                          if not file_exists:
-                                             master_csvw.writerow(["Camera Name", "Start Time", "End Time", "TraceID", "Status"]) # เขียน Header
+                                             master_csvw.writerow(["Cam_name", "Timestamp", "EndTime", "TraceID", "Status"]) # เขียน Header
                                              
                                          # เขียนข้อมูล (4 columns ตามที่คุณต้องการ)
                                          master_csvw.writerow([args.camera_name, cross_time_str, exit_time_str, pid, 'entrance'])

@@ -1,11 +1,15 @@
 {
   "5033_entrance2": {
-    "video_path": "vdo/5033_NorthPattaya-Entrance2.mp4",
+    "video_path": "ss_data/vdo/5033 North Pattaya (Cam- 61 ) - Entrance2.mp4",
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
+    "start_min": 0, 
+    "duration_min": 5,
     "pink_zone": [
-      [100, 15],
-      [520, 187]
+      [98, 14],
+      [117, 194],
+      [493, 193],
+      [497, 20]
     ],
     "lines": {
       "red":    [[117, 140], [504, 140]],
@@ -15,9 +19,11 @@
     }
   },
   "5129_Banglen-Yao": {
-    "video_path": "vdo/5129_Banglen-Yaowarat.mp4",
+    "video_path": "ss_data/vdo/5129 Banglen (Cam- 1 ) - Z07_CustEnt Yaowarat_new.mp4",
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
+    "start_min": 0, 
+    "duration_min": 5,
     "pink_zone": [
       [0, 79],
       [55, 267],
@@ -33,9 +39,11 @@
     }
   },
   "166_rawai2-cam24": {
-    "video_path": "vdo/166_rawai2-cam24.mp4",
+    "video_path": "ss_data/vdo/ST.166-Rawai 2-CAM 24 CUSTIOMER ENTRANCE.mp4",
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
+    "start_min": 0, 
+    "duration_min": 5,
     "pink_zone": [
       [237, 42],
       [245, 117],
@@ -50,26 +58,11 @@
     }
   },
   "lampun-19_new": {
-    "video_path": "vdo/Lampun-19_CUSTOMER-ENTRANCE_new.mp4",
+    "video_path": "ss_data/vdo/ST.34-Lampun-19 CUSTOMER ENTRANCE_new.mp4",
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
-    "pink_zone": [
-      [65, 38],
-      [67, 143],
-      [321, 127],
-      [328, 20]
-    ],
-    "lines": {
-      "red":    [[112, 82], [282, 79]],
-      "blue":   [[112, 82], [39, 165]],
-      "green":  [[282, 79], [387, 267]],
-      "yellow": [[39, 165], [387, 267]]
-    }
-  },
-  "lampun-19_old": {
-    "video_path": "vdo/Lampun-19_CUSTOMER-ENTRANCE_old.mp4",
-    "display_width": 1280,
-    "timestamp_roi": [0, 0, 0, 0],
+    "start_min": 0, 
+    "duration_min": 5,
     "pink_zone": [
       [65, 38],
       [67, 143],
@@ -84,9 +77,11 @@
     }
   },
   "6401_phongphet": {
-    "video_path": "vdo/6401_phongphet.mp4",
+    "video_path": "ss_data/vdo/6401 Phongphet (Cam- 37 ) - Entrance 1.mp4",
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
+    "start_min": 0, 
+    "duration_min": 5,
     "pink_zone": [
       [109, 39],
       [123, 151],
