@@ -1,5 +1,6 @@
 {
   "5033_entrance2": {
+    "file_name": "5033 North Pattaya (Cam- 61 ) - Entrance2",
     "video_path": "ss_data/vdo/5033 North Pattaya (Cam- 61 ) - Entrance2.mp4",
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
@@ -19,6 +20,7 @@
     }
   },
   "5129_Banglen-Yao": {
+    "file_name": "5129 Banglen (Cam- 1 ) - Z07_CustEnt Yaowarat_new",
     "video_path": "ss_data/vdo/5129 Banglen (Cam- 1 ) - Z07_CustEnt Yaowarat_new.mp4",
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
@@ -39,6 +41,7 @@
     }
   },
   "166_rawai2-cam24": {
+    "file_name": "ST.166-Rawai 2-CAM 24 CUSTIOMER ENTRANCE",
     "video_path": "ss_data/vdo/ST.166-Rawai 2-CAM 24 CUSTIOMER ENTRANCE.mp4",
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
@@ -57,7 +60,8 @@
       "yellow": [[121, 349], [477, 271]]
     }
   },
-  "lampun-19_new": {
+  "lampun-19": {
+    "file_name": "ST.34-Lampun-19 CUSTOMER ENTRANCE_new",
     "video_path": "ss_data/vdo/ST.34-Lampun-19 CUSTOMER ENTRANCE_new.mp4",
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
@@ -77,6 +81,7 @@
     }
   },
   "6401_phongphet": {
+    "file_name": "6401 Phongphet (Cam- 37 ) - Entrance 1",
     "video_path": "ss_data/vdo/6401 Phongphet (Cam- 37 ) - Entrance 1.mp4",
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],

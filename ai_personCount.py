@@ -164,6 +164,7 @@ def main():
     yellow_line=tuple(map(tuple,config['lines']['yellow']))
     pink_zone = config['pink_zone']
     timestamp_roi=config.get('timestamp_roi')
+    file_name=config.get('file_name');
 
     # --- MODIFIED: สร้าง Path สำหรับการรันครั้งนี้ ---
     run_output_dir = os.path.join(BASE_OUTPUT_DIR,"camera", args.camera_name, current_run_timestamp)
@@ -190,29 +191,12 @@ def main():
     if original_w==0 or original_h==0: raise IOError("Could not read video dimensions.")
     aspect=original_w/max(1,original_h); display_height=int(display_width/aspect)
 
-    cv2.namedWindow("Video Analysis", cv2.WINDOW_NORMAL)
-    paused=False; mouse_pos_raw=(-1,-1)
+   
     counts={"inbound":0}; person_states={}; next_pid=1
     tid_to_pid = {}
     
     neg_is_bottom_red=make_side_label(red_line[0],red_line[1])
     bottom_sign=-1 if neg_is_bottom_red else 1; top_sign=-bottom_sign
-
-    # --- Mouse Callback (FIXED) ---
-    CONFIG_HELPER_FILE = "config/config_points.txt"
-    def _on_mouse(event, x, y, flags, param):
-        nonlocal mouse_pos_raw
-        rx = int(x * original_w / display_width)
-        ry = int(y * original_h / display_height)
-        mouse_pos_raw = (rx, ry)
-        if event == cv2.EVENT_LBUTTONDOWN:
-            coord_str = f"[{rx}, {ry}],"
-            print(f"Clicked Coordinates: ({rx}, {ry}) - Saved to {CONFIG_HELPER_FILE}")
-            try:
-                with open(CONFIG_HELPER_FILE, "a") as f: f.write(coord_str + "\n")
-            except Exception as e: print(f"Error writing to {CONFIG_HELPER_FILE}: {e}")
-    cv2.setMouseCallback("Video Analysis", _on_mouse)
-    # --- END FIX ---
     
     video_start_time_processed = None
     last_frame = None
@@ -227,12 +211,8 @@ def main():
             while True:
                 current_time_dt = datetime.now()
                 
-                if not paused:
-                    ret, frame = cap.read()
-                    if not ret: break
-                    last_frame = frame.copy()
-                if last_frame is None: continue
-                frame = last_frame.copy()
+                ret, frame = cap.read()
+                if not ret: break
 
                 current_video_msec = cap.get(cv2.CAP_PROP_POS_MSEC)
                 current_video_sec = current_video_msec / 1000.0
@@ -339,7 +319,7 @@ def main():
                                              master_csvw.writerow(["Cam_name", "Timestamp", "EndTime", "TraceID", "Status"]) # เขียน Header
                                              
                                          # เขียนข้อมูล (4 columns ตามที่คุณต้องการ)
-                                         master_csvw.writerow([args.camera_name, cross_time_str, exit_time_str, pid, 'entrance'])
+                                         master_csvw.writerow([file_name, cross_time_str, exit_time_str, pid, 'entrance'])
                                  
                                  except Exception as e:
                                      print(f"Error writing to Master Log: {e}")
@@ -398,10 +378,6 @@ def main():
                      except: pass
                 cv2.putText(frame, display_timestamp_str, (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,255,255), 1)
                 
-                if mouse_pos_raw[0]>=0 and paused:
-                    cv2.drawMarker(frame,(mouse_pos_raw[0],mouse_pos_raw[1]),(0,255,255), cv2.MARKER_CROSS,20,2)
-                    text=f"x:{mouse_pos_raw[0]} y:{mouse_pos_raw[1]}"; cv2.putText(frame,text,(mouse_pos_raw[0]+15,mouse_pos_raw[1]-15),cv2.FONT_HERSHEY_SIMPLEX,0.6,(0,255,255),2)
-
                 cv2.imshow('Video Analysis', cv2.resize(frame, (display_width, display_height)))
                 k = cv2.waitKey(10) & 0xFF
                 if k == 27: break

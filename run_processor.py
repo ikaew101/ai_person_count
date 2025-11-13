@@ -6,6 +6,9 @@ import time
 import json
 import csv_validator
 import generate_master_log
+import google_auth
+
+from googleapiclient.http import MediaFileUpload
 
 MASTER_LOG_FILE = 'qa_camera_check/master_video_log.csv'
 CONFIG_FILE = 'config/camera_config.json'
@@ -19,6 +22,82 @@ def read_all_tasks():
         reader = csv.DictReader(f)
         fieldnames = reader.fieldnames if reader.fieldnames else ['camera_name', 'video_path', 'status']
         return [row for row in reader], fieldnames
+
+# === (ฟังก์ชัน Helpers สำหรับ Google Drive Upload) ===
+def find_or_create_folder(service, folder_name, parent_id=None):
+    """ค้นหาโฟลเดอร์ ถ้าไม่เจอให้สร้างใหม่"""
+    # 1. ค้นหาก่อน
+    query = f"name='{folder_name}' and mimeType='application/vnd.google-apps.folder'"
+    if parent_id:
+        query += f" and '{parent_id}' in parents"
+    else:
+        query += " and 'root' in parents"
+
+    response = service.files().list(q=query, spaces='drive', fields='files(id, name)').execute()
+    files = response.get('files', [])
+
+    if files:
+        # ถ้าเจอ
+        return files[0].get('id')
+    else:
+        # ถ้าไม่เจอ, สร้างใหม่
+        print(f"Folder '{folder_name}' not found, creating...")
+        file_metadata = {
+            'name': folder_name,
+            'mimeType': 'application/vnd.google-apps.folder',
+            'parents': [parent_id] if parent_id else []
+        }
+        folder = service.files().create(body=file_metadata, fields='id').execute()
+        print(f"Created folder '{folder_name}' (ID: {folder.get('id')})")
+        return folder.get('id')
+
+def upload_file(service, local_file_path, remote_folder_id):
+    """อัปโหลดไฟล์ 1 ไฟล์"""
+    file_name = os.path.basename(local_file_path)
+    print(f"Uploading '{file_name}' to Drive...")
+    try:
+        file_metadata = {
+            'name': file_name,
+            'parents': [remote_folder_id]
+        }
+        media = MediaFileUpload(local_file_path, resumable=True)
+
+        # ตรวจสอบว่ามีไฟล์ชื่อนี้อยู่แล้วหรือไม่ (เพื่ออัปเดตแทนการสร้างซ้ำ)
+        query = f"name='{file_name}' and '{remote_folder_id}' in parents"
+        response = service.files().list(q=query, spaces='drive', fields='files(id)').execute()
+        files = response.get('files', [])
+
+        if files:
+            # ถ้ามี -> อัปเดตไฟล์เดิม
+            file_id = files[0].get('id')
+            service.files().update(fileId=file_id, body=file_metadata, media_body=media).execute()
+            print(f"Updated '{file_name}' in Drive.")
+        else:
+            # ถ้าไม่มี -> สร้างไฟล์ใหม่
+            service.files().create(body=file_metadata, media_body=media).execute()
+            print(f"Created '{file_name}' in Drive.")
+
+    except Exception as e:
+        print(f"Error uploading {file_name}: {e}")
+
+def upload_folder_recursive(service, local_folder, remote_parent_folder_id):
+    """อัปโหลดทุกอย่างในโฟลเดอร์ (รวมถึงโฟลเดอร์ย่อย)"""
+    print(f"\nUploading contents of '{local_folder}'...")
+    folder_name = os.path.basename(local_folder)
+
+    # 1. สร้างโฟลเดอร์ปลายทาง (เช่น 'Camera', 'Output')
+    remote_folder_id = find_or_create_folder(service, folder_name, remote_parent_folder_id)
+
+    # 2. วนลูปไฟล์/โฟลเดอร์ ในเครื่อง
+    for item_name in os.listdir(local_folder):
+        local_item_path = os.path.join(local_folder, item_name)
+
+        if os.path.isdir(local_item_path):
+            # ถ้าเป็นโฟลเดอร์ -> เรียกตัวเองซ้ำ (Recursive)
+            upload_folder_recursive(service, local_item_path, remote_folder_id)
+        elif os.path.isfile(local_item_path):
+            # ถ้าเป็นไฟล์ -> อัปโหลด
+            upload_file(service, local_item_path, remote_folder_id)
 
 def write_all_tasks(tasks, fieldnames):
     """เขียน List of Dictionaries ทับ CSV ทั้งไฟล์"""
@@ -75,6 +154,50 @@ def main_processor():
             except Exception as e:
                 print(f"!!! ERROR during validation step: {e}")
 
+        print("\n===========================================")
+        print("🚀 Starting Google Drive Upload step...")
+        print("===========================================")
+        try:
+            service = google_auth.get_drive_service()
+            if service:
+                # 1. หา ID โฟลเดอร์หลัก
+                base_id = find_or_create_folder(service, "TDG-QA Zonemall")
+
+                # 2. หา ID โฟลเดอร์ QA Camera
+                qa_camera_id = find_or_create_folder(service, "QA Camera", base_id)
+
+                # 3. หา ID โฟลเดอร์ย่อย
+                output_id = find_or_create_folder(service, "Output", qa_camera_id)
+                camera_id = find_or_create_folder(service, "Camera", qa_camera_id)
+                ai_result_id = find_or_create_folder(service, "AI Result", qa_camera_id)
+
+                # 4. อัปโหลดไฟล์และโฟลเดอร์
+
+                # 4.1 อัปโหลด master_video_log.csv
+                upload_file(service, MASTER_LOG_FILE, qa_camera_id) #
+
+                # 4.2 อัปโหลดโฟลเดอร์ AI Result (หาไฟล์ validation_{date}.csv)
+                ai_result_path = "qa_camera_check/ai_result" #
+                for f_name in os.listdir(ai_result_path):
+                    if "validation_" in f_name and f_name.endswith(".csv"):
+                        upload_file(service, os.path.join(ai_result_path, f_name), ai_result_id)
+
+                # 4.3 อัปโหลดโฟลเดอร์ Output (แบบไม่ recursive เพราะมีแต่ไฟล์)
+                output_path = "qa_camera_check/output" #
+                for f_name in os.listdir(output_path):
+                    f_path = os.path.join(output_path, f_name)
+                    if os.path.isfile(f_path):
+                        upload_file(service, f_path, output_id)
+
+                # 4.4 อัปโหลดโฟลเดอร์ Camera (แบบ Recursive)
+                # (เราจะอัปโหลดทั้งโฟลเดอร์ 'camera' ไปไว้ใน 'Camera')
+                upload_folder_recursive(service, "qa_camera_check/camera", qa_camera_id)
+
+                print("✅ Google Drive Upload completed.")
+            else:
+                print("!!! ERROR: Could not connect to Google Drive for upload.")
+        except Exception as e:
+            print(f"!!! ERROR during Google Drive Upload step: {e}")
             print("All processes finished. Exiting.")
             break # จบการทำงานของ while True
                 
