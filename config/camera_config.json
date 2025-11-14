@@ -5,7 +5,7 @@
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
     "start_min": 0, 
-    "duration_min": 60,
+    "duration_min": 1,
     "pink_zone": [
       [98, 14],
       [117, 194],
@@ -25,7 +25,7 @@
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
     "start_min": 0, 
-    "duration_min": 60,
+    "duration_min": 1,
     "pink_zone": [
       [0, 79],
       [55, 267],
@@ -46,7 +46,7 @@
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
     "start_min": 0, 
-    "duration_min": 60,
+    "duration_min": 1,
     "pink_zone": [
       [237, 42],
       [245, 117],
@@ -66,7 +66,7 @@
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
     "start_min": 0, 
-    "duration_min": 60,
+    "duration_min": 1,
     "pink_zone": [
       [65, 38],
       [67, 143],
@@ -86,7 +86,7 @@
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
     "start_min": 0, 
-    "duration_min": 60,
+    "duration_min": 1,
     "pink_zone": [
       [109, 39],
       [123, 151],
@@ -111,7 +111,7 @@
             0
         ],
         "start_min": 0,
-        "duration_min": 0,
+        "duration_min": 1,
         "pink_zone": [
           [265, 12],
           [267, 125],
@@ -136,7 +136,7 @@
             0
         ],
         "start_min": 0,
-        "duration_min": 0,
+        "duration_min": 1,
         "pink_zone": [
           [196, 36],
           [206, 145],
@@ -161,7 +161,7 @@
             0
         ],
         "start_min": 0,
-        "duration_min": 0,
+        "duration_min": 1,
         "pink_zone": [
           [0, 20],
           [59, 349],
@@ -186,7 +186,7 @@
             0
         ],
         "start_min": 0,
-        "duration_min": 0,
+        "duration_min": 1,
         "pink_zone": [
           [495, 56],
           [481, 141],
@@ -211,7 +211,7 @@
             0
         ],
         "start_min": 0,
-        "duration_min": 0,
+        "duration_min": 1,
         "pink_zone": [
           [184, 22],
           [193, 131],
@@ -236,7 +236,7 @@
             0
         ],
         "start_min": 0,
-        "duration_min": 0,
+        "duration_min": 1,
         "pink_zone": [
           [0, 85],
           [7, 246],
@@ -261,7 +261,7 @@
             0
         ],
         "start_min": 0,
-        "duration_min": 0,
+        "duration_min": 1,
         "pink_zone": [
           [189, 12],
           [200, 209],
@@ -286,7 +286,7 @@
             0
         ],
         "start_min": 0,
-        "duration_min": 0,
+        "duration_min": 1,
         "pink_zone": [
           [278, 11],
           [283, 90],
@@ -311,7 +311,7 @@
             0
         ],
         "start_min": 0,
-        "duration_min": 0,
+        "duration_min": 1,
         "pink_zone": [
           [304, 77],
           [304, 173],
@@ -336,7 +336,7 @@
             0
         ],
         "start_min": 0,
-        "duration_min": 0,
+        "duration_min": 1,
         "pink_zone": [
           [203, 32],
           [227, 197],
@@ -361,7 +361,7 @@
             0
         ],
         "start_min": 0,
-        "duration_min": 0,
+        "duration_min": 1,
         "pink_zone": [
           [83, 32],
           [126, 266],
@@ -386,7 +386,7 @@
             0
         ],
         "start_min": 0,
-        "duration_min": 0,
+        "duration_min": 1,
         "pink_zone": [
           [18, 36],
           [40, 235],
