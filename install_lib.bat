@@ -5,18 +5,18 @@ echo =======================================================
 echo Upgrading pip...
 echo =======================================================
 REM Use 'python -m pip' for consistency
-python -m pip install --upgrade pip
+py -m pip install --upgrade pip
 
 echo =======================================================
 echo Installing Python Dependencies...
 echo =======================================================
 REM Use '%~dp0' to make the path relative to the batch file itself
-python -m pip install -r "%~dp0config\requirements.txt"
+py -m pip install -r "%~dp0config\requirements.txt"
 
 echo =======================================================
 echo Installing Google Drive...
 echo =======================================================
-python -m pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
+py -m pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
 echo =======================================================
 echo All Python libraries are installed!
