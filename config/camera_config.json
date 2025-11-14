@@ -20,8 +20,8 @@
     }
   },
   "5129_Banglen-Yao": {
-    "file_name": "5129 Banglen (Cam- 1 ) - Z07_CustEnt Yaowarat_new",
-    "video_path": "ss_data/vdo/5129 Banglen (Cam- 1 ) - Z07_CustEnt Yaowarat_new.mp4",
+    "file_name": "5129 Banglen (Cam- 1 ) - Z07_CustEnt Yaowarat",
+    "video_path": "ss_data/vdo/5129 Banglen (Cam- 1 ) - Z07_CustEnt Yaowarat.mp4",
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
     "start_min": 0, 
@@ -61,8 +61,8 @@
     }
   },
   "lampun-19": {
-    "file_name": "ST.34-Lampun-19 CUSTOMER ENTRANCE_new",
-    "video_path": "ss_data/vdo/ST.34-Lampun-19 CUSTOMER ENTRANCE_new.mp4",
+    "file_name": "ST.34-Lampun-19 CUSTOMER ENTRANCE",
+    "video_path": "ss_data/vdo/ST.34-Lampun-19 CUSTOMER ENTRANCE.mp4",
     "display_width": 1280,
     "timestamp_roi": [0, 0, 0, 0],
     "start_min": 0, 
@@ -99,5 +99,305 @@
       "green":  [[400, 86], [493, 190]],
       "yellow": [[2, 314], [493, 190]]
     }
-  }
+  },
+  "5002_Mahachai": {
+        "file_name": "5002 Mahachai (Cam- 42 ) - 5002_InsideCustEnt 1",
+        "video_path": "ss_data/vdo/5002 Mahachai (Cam- 42 ) - 5002_InsideCustEnt 1.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 0,
+        "pink_zone": [
+          [265, 12],
+          [267, 125],
+          [463, 152],
+          [477, 17]
+        ],
+        "lines": {
+            "red": [[251, 52], [486, 70]],
+            "blue": [[251, 52], [42, 186]],
+            "green": [[486, 70], [611, 326]],
+            "yellow": [[42, 186], [611, 326]]
+        }
+    },
+    "5014 Ayutthaya (Cam- 95 ) - Basement#1": {
+        "file_name": "5014 Ayutthaya (Cam- 95 ) - Basement#1",
+        "video_path": "ss_data/vdo/5014 Ayutthaya (Cam- 95 ) - Basement#1.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 0,
+        "pink_zone": [
+          [196, 36],
+          [206, 145],
+          [429, 140],
+          [428, 33]
+        ],
+        "lines": {
+            "red": [[197, 75], [431, 78]],
+            "blue": [[197, 75], [87, 148]],
+            "green": [[431, 78], [638, 278]],
+            "yellow": [[87, 148], [638, 278]]
+        }
+    },
+    "5022 Sukumvit 50(Cam-84)-5022 Entrance 2 In": {
+        "file_name": "5022 Sukumvit 50(Cam-84)-5022 Entrance 2 In",
+        "video_path": "ss_data/vdo/5022 Sukumvit 50(Cam-84)-5022 Entrance 2 In.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 0,
+        "pink_zone": [
+          [0, 20],
+          [59, 349],
+          [383, 179],
+          [383, 12]
+        ],
+        "lines": {
+            "red": [[0, 298], [384, 129]],
+            "blue": [[0, 299], [30, 371]],
+            "green":  [[385, 129], [497, 228]],
+            "yellow": [[30, 371], [496, 227]]
+        }
+    },
+    "5031 Had Yai (Cam- 93 ) - Inside Cust Entrance3": {
+        "file_name": "5031 Had Yai (Cam- 93 ) - Inside Cust Entrance3",
+        "video_path": "ss_data/vdo/5031 Had Yai (Cam- 93 ) - Inside Cust Entrance3.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 0,
+        "pink_zone": [
+          [495, 56],
+          [481, 141],
+          [605, 193],
+          [631, 98]
+        ],
+        "lines": {
+            "red": [[503, 109], [632, 140]],
+            "blue": [[503, 109], [357, 371]],
+            "green": [[632, 140], [637, 335]],
+            "yellow": [[357, 371], [637, 335]]
+        }
+    },
+    "5040 Ladprao(Cam-66)-5040_Entrance3 In": {
+        "file_name": "5040 Ladprao(Cam-66)-5040_Entrance3 In",
+        "video_path": "ss_data/vdo/5040 Ladprao(Cam-66)-5040_Entrance3 In.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 0,
+        "pink_zone": [
+          [184, 22],
+          [193, 131],
+          [444, 134],
+          [454, 27]
+        ],
+        "lines": {
+            "red": [[179, 77], [461, 81]],
+            "blue": [[179, 77], [1, 268]],
+            "green": [[461, 81], [616, 242]],
+            "yellow": [[1, 268], [617, 242]]
+        }
+    },
+    "5062 Fang (Cam- 49 ) - Inside Customer Entrance 2": {
+        "file_name": "5062 Fang (Cam- 49 ) - Inside Customer Entrance 2",
+        "video_path": "ss_data/vdo/5062 Fang (Cam- 49 ) - Inside Customer Entrance 2.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 0,
+        "pink_zone": [
+          [0, 85],
+          [7, 246],
+          [280, 179],
+          [276, 33]
+        ],
+        "lines": {
+            "red": [[0, 166], [280, 111]],
+            "blue": [[0, 167], [1, 296]],
+            "yellow": [[1, 295], [434, 205]],
+            "green": [[281, 111], [436, 206]]
+        }
+    },
+    "5094 Hatyai 2 (Cam- 75 ) - Z02_Inside Cust Ent.2": {
+        "file_name": "5094 Hatyai 2 (Cam- 75 ) - Z02_Inside Cust Ent.2",
+        "video_path": "ss_data/vdo/5094 Hatyai 2 (Cam- 75 ) - Z02_Inside Cust Ent.2.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 0,
+        "pink_zone": [
+          [189, 12],
+          [200, 209],
+          [468, 207],
+          [482, 13]
+        ],
+        "lines": {
+            "red": [[194, 137], [481, 137]],
+            "blue": [[194, 137], [4, 291]],
+            "green": [[482, 137], [636, 359]],
+            "yellow": [[2, 292], [636, 360]]
+        }
+    },
+    "5122 Lom Sak (Cam- 10 ) - 5122_Inside Customer Entrance2": {
+        "file_name": "5122 Lom Sak (Cam- 10 ) - 5122_Inside Customer Entrance2",
+        "video_path": "ss_data/vdo/5122 Lom Sak (Cam- 10 ) - 5122_Inside Customer Entrance2.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 0,
+        "pink_zone": [
+          [278, 11],
+          [283, 90],
+          [367, 83],
+          [367, 10]
+        ],
+        "lines": {
+            "red": [[263, 53], [385, 47]],
+            "blue": [[263, 53], [201, 95]],
+            "green": [[386, 47], [480, 137]],
+            "yellow": [[201, 95], [480, 137]]
+        }
+    },
+    "5147 Nang Rong (Cam- 46 ) - Entrance3 In": {
+        "file_name": "5147 Nang Rong (Cam- 46 ) - Entrance3 In",
+        "video_path": "ss_data/vdo/5147 Nang Rong (Cam- 46 ) - Entrance3 In.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 0,
+        "pink_zone": [
+          [304, 77],
+          [304, 173],
+          [400, 174],
+          [404, 79]
+        ],
+        "lines": {
+            "red": [[306, 125], [401, 124]],
+            "blue": [[306, 125], [296, 215]],
+            "green": [[402, 124], [438, 164]],
+            "yellow": [[296, 215], [438, 164]]
+        }
+    },
+    "5157 Kosumpisai (Cam- 55 ) - Entrance 2 In": {
+        "file_name": "5157 Kosumpisai (Cam- 55 ) - Entrance 2 In",
+        "video_path": "ss_data/vdo/5157 Kosumpisai (Cam- 55 ) - Entrance 2 In.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 0,
+        "pink_zone": [
+          [203, 32],
+          [227, 197],
+          [404, 173],
+          [395, 15]
+        ],
+        "lines": {
+            "red": [[278, 112], [416, 96]],
+            "blue": [[277, 112], [227, 369]],
+            "green": [[417, 96], [566, 327]],
+            "yellow": [[227, 369], [565, 327]]
+        }
+    },
+    "5164 Prathai (Cam- 39 ) - Entrance1 In (KFC)": {
+        "file_name": "5164 Prathai (Cam- 39 ) - Entrance1 In (KFC)",
+        "video_path": "ss_data/vdo/5164 Prathai (Cam- 39 ) - Entrance1 In (KFC).mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 0,
+        "pink_zone": [
+          [83, 32],
+          [126, 266],
+          [553, 243],
+          [570, 33]
+        ],
+        "lines": {
+            "red": [[211, 194], [473, 181]],
+            "blue": [[210, 194], [146, 283]],
+            "green": [[475, 181], [638, 341]],
+            "yellow": [[146, 285], [638, 342]]
+        }
+    },
+    "5164 Prathai (Cam- 42 ) - Entrance2 In (Gold)": {
+        "file_name": "5164 Prathai (Cam- 42 ) - Entrance2 In (Gold)",
+        "video_path": "ss_data/vdo/5164 Prathai (Cam- 42 ) - Entrance2 In (Gold).mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 0,
+        "pink_zone": [
+          [18, 36],
+          [40, 235],
+          [271, 202],
+          [264, 20]
+        ],
+        "lines": {
+            "red": [[16, 134], [281, 105]],
+            "blue": [[15, 134], [0, 259]],
+            "green": [[282, 105], [638, 317]],
+            "yellow": [[0, 257], [639, 318]]
+        }
+    }
 }

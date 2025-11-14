@@ -37,32 +37,37 @@ def main():
     aspect=original_w/max(1,original_h); display_height=int(display_width/aspect)
 
     cv2.namedWindow("Boundary Drawer", cv2.WINDOW_NORMAL)
-    paused=True # <-- 1. เริ่มแบบ Paused เลย
+    paused=True 
     mouse_pos_raw=(-1,-1)
     last_frame = None
 
-    # --- ตัวแปรสถานะสำหรับวาดเส้น ---
     current_drawing_key = None 
     temp_point_1 = None
     temp_points_list = [] 
 
-    # --- ฟังก์ชัน Helper สำหรับบันทึกลง .txt ---
+    try:
+        f_log = open(CONFIG_HELPER_FILE, "a", encoding='utf-8')
+        f_log.write(f"\n\n# --- {args.camera_name} coordinates (at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}) ---\n")
+    except Exception as e:
+        print(f"!!! CRITICAL ERROR: Could not open log file {CONFIG_HELPER_FILE}: {e}")
+        return 
+
     def save_to_helper_file(shape_key, data_list):
         try:
-            with open(CONFIG_HELPER_FILE, "a", encoding='utf-8') as f:
-                f.write(f"\n# --- {shape_key.upper()} coordinates (at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}) ---\n")
-                if shape_key == 'pink_zone':
-                    f.write(f"\"pink_zone\": [\n")
-                    for point in data_list:
-                        f.write(f"    {point},\n")
-                    f.write("],\n")
-                else: 
-                    f.write(f"\"{shape_key}\": {data_list},\n")
-                print(f"Coordinates for '{shape_key}' saved to {CONFIG_HELPER_FILE}")
+            if shape_key == 'pink_zone':
+                f_log.write(f"\"pink_zone\": [\n")
+                for point in data_list:
+                    f_log.write(f"    {point},\n")
+                f_log.write("],\n")
+            else: 
+                f_log.write(f"\"{shape_key}\": {data_list},\n")
+            
+            f_log.flush() 
+            print(f"Coordinates for '{shape_key}' saved to {CONFIG_HELPER_FILE}")
         except Exception as e:
             print(f"Error writing to {CONFIG_HELPER_FILE}: {e}")
 
-    # --- Mouse Callback (เกือบเหมือนเดิม) ---
+    # --- Mouse Callback ---
     def _on_mouse(event, x, y, flags, param):
         nonlocal mouse_pos_raw, temp_point_1, current_drawing_key, temp_points_list
         nonlocal red_line, blue_line, green_line, yellow_line, pink_zone
@@ -73,7 +78,7 @@ def main():
 
         if event == cv2.EVENT_LBUTTONDOWN:
             if current_drawing_key is None:
-                pass # โหมดปกติ ไม่ต้องทำอะไร
+                pass 
             
             elif current_drawing_key in ['red', 'blue', 'green', 'yellow']:
                 if temp_point_1 is None:
@@ -102,7 +107,7 @@ def main():
 
     try:
         while True:
-            if not paused or last_frame is None: # <-- 2. อ่านเฟรมเฉพาะเมื่อ Play หรือเป็นเฟรมแรก
+            if not paused or last_frame is None:
                 ret, frame = cap.read()
                 if not ret: 
                     print("End of video. Resetting to first frame.")
@@ -110,16 +115,21 @@ def main():
                     continue
                 last_frame = frame.copy()
             
-            frame = last_frame.copy() # ทำงานบนเฟรมที่หยุดนิ่ง
+            frame = last_frame.copy() 
 
-            # --- UI Display (วาดเส้น/โซน ที่อัปเดตแล้วจากใน memory) ---
-            cv2.polylines(frame, [np.array(pink_zone, dtype=np.int32)], isClosed=True, color=(255, 182, 193), thickness=2)
-            cv2.line(frame, red_line[0], red_line[1], (0,0,255), 2)
-            cv2.line(frame, blue_line[0], blue_line[1], (255,0,0), 2)
-            cv2.line(frame, green_line[0], green_line[1], (0,255,0), 2)
-            cv2.line(frame, yellow_line[0], yellow_line[1], (0,255,255), 2)
+            # --- UI Display  ---
+            if pink_zone: 
+                cv2.polylines(frame, [np.array(pink_zone, dtype=np.int32)], isClosed=True, color=(255, 182, 193), thickness=2)
+            if red_line: 
+                cv2.line(frame, red_line[0], red_line[1], (0,0,255), 2)
+            if blue_line: 
+                cv2.line(frame, blue_line[0], blue_line[1], (255,0,0), 2)
+            if green_line: 
+                cv2.line(frame, green_line[0], green_line[1], (0,255,0), 2)
+            if yellow_line: 
+                cv2.line(frame, yellow_line[0], yellow_line[1], (0,255,255), 2)
             
-            # --- UI สำหรับวาดเส้น (เหมือนเดิม) ---
+            # --- UI สำหรับวาดเส้น ---
             if mouse_pos_raw[0]>=0:
                 cv2.drawMarker(frame,(mouse_pos_raw[0],mouse_pos_raw[1]),(0,255,255), cv2.MARKER_CROSS,20,2)
                 text=f"x:{mouse_pos_raw[0]} y:{mouse_pos_raw[1]}"; cv2.putText(frame,text,(mouse_pos_raw[0]+15,mouse_pos_raw[1]-15),cv2.FONT_HERSHEY_SIMPLEX,0.6,(0,255,255),2)
@@ -143,12 +153,12 @@ def main():
             else:
                  prompt_text = "Paused: (P)lay. Draw: (R)ed (B)lue (G)reen (Y)ellow (K)Pink. (ESC)uit"
             
-            cv2.putText(frame, prompt_text, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+            cv2.putText(frame, prompt_text, (10, original_h - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
             cv2.imshow('Boundary Drawer', cv2.resize(frame, (display_width, display_height)))
             
-            # --- Key Handler (เหมือนเดิม) ---
-            k = cv2.waitKey(20) & 0xFF # <-- 3. เพิ่ม delay เล็กน้อย
+            # --- Key Handler ---
+            k = cv2.waitKey(20) & 0xFF 
             
             if k == 27: # ESC 
                 if temp_point_1 is not None or current_drawing_key is not None or len(temp_points_list) > 0:
@@ -183,10 +193,15 @@ def main():
                 current_drawing_key = 'yellow'; temp_point_1 = None; print("DRAWING MODE: YELLOW")
             elif k == ord('k'): 
                 current_drawing_key = 'pink_zone'; temp_points_list = []; print("DRAWING MODE: PINK ZONE")
-            
+
     except KeyboardInterrupt:
         print("\nUser interrupted process.")
     finally:
+        if 'f_log' in locals() and not f_log.closed:
+            f_log.write(f"#------------------------ End coordinates ------------------------#\n")
+            f_log.close()
+            print(f"Log file '{CONFIG_HELPER_FILE}' closed.")
+
         cap.release()
         cv2.destroyAllWindows()
         print("Boundary Drawer closed.")

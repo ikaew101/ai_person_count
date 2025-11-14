@@ -1,4 +1,3 @@
-*.mp4
 qa_camera_check/*
 .env
 __pycache__/*
