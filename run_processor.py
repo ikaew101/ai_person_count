@@ -206,7 +206,8 @@ def main_processor():
 
                     # 4.4 อัปโหลดโฟลเดอร์ Camera (แบบ Recursive)
                     # (เราจะอัปโหลดทั้งโฟลเดอร์ 'camera' ไปไว้ใน 'Camera')
-                    upload_folder_recursive(service, "qa_camera_check/camera", qa_camera_id)
+                    
+                    # upload_folder_recursive(service, "qa_camera_check/camera", qa_camera_id)
 
                     print("✅ Google Drive Upload completed.")
                 else:
