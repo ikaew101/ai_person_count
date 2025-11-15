@@ -8,13 +8,6 @@ echo Processing Download Raw Data (File Video, Camera raw excel)
 echo ===========================================
 py download_rawdata.py
 
-REM --- Check Status File ---
-echo.
-echo ===========================================
-echo Processing Check Status File
-echo ===========================================
-py generate_master_log.py
-
 REM --- Run Processing AI QA Camera ---
 echo.
 echo ===========================================
