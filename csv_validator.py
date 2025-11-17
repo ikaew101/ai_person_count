@@ -3,7 +3,7 @@ import os
 import glob
 import datetime
 
-def process_data_validation():
+def process_data_validation(run_date_str=None):
     
     # ======================================================================
     # !! ตัวแปรตั้งค่า: !!
@@ -29,7 +29,7 @@ def process_data_validation():
     folder2_path = "./ss_data/raw_data" #<- โฟลเดอร์ที่เก็บไฟล์ Excel ที่ต้องการตรวจสอบ
     output_folder_path = "./qa_camera_check/output" #<- โฟลเดอร์ที่เก็บไฟล์ Output
     
-    today_date_str = datetime.datetime.now().strftime('%Y%m%d')
+    today_date_str = run_date_str if run_date_str else datetime.datetime.now().strftime('%Y%m%d')
     tdg_file_name = f"validation_{today_date_str}.csv"
     tdg_file_path = os.path.join(folder1_path, tdg_file_name)
     

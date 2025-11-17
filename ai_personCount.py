@@ -137,6 +137,7 @@ def main():
     parser.add_argument("--duration_min", type=int, default=None, help="Process for this many minutes (default: process until end of video)")
     # --- NEW: เพิ่ม Argument สำหรับ Hour Offset ---
     parser.add_argument("--video_hour", type=int, default=None, help="Manual hour (e.g., 18) to use for the Log file")
+    parser.add_argument("--run_date", type=str, default=None, help="Date string (YYYYMMDD) for the master log file")
     # --- END NEW ---
     args = parser.parse_args()
     # --- END MODIFIED ---
@@ -176,7 +177,7 @@ def main():
     summary_log_path = os.path.join(run_output_dir, f"summary_log_{args.camera_name}_{current_run_timestamp}.csv") # ไฟล์สรุป
     
     # --- NEW: กำหนด Path สำหรับ Master Log File ---
-    today_date_str = datetime.now().strftime('%Y%m%d')
+    today_date_str = args.run_date if args.run_date else datetime.now().strftime('%Y%m%d')
     master_log_filename = f"validation_{today_date_str}.csv"
     master_log_path = os.path.join(BASE_OUTPUT_RESULT, master_log_filename)
     # --- END NEW ---

@@ -7,6 +7,7 @@ import json
 import csv_validator
 import generate_master_log
 import google_auth
+from datetime import datetime, timedelta
 
 from googleapiclient.http import MediaFileUpload
 
@@ -125,10 +126,10 @@ def write_all_tasks(tasks, fieldnames):
 def find_next_task(tasks):
     """หา task 'failed' ก่อน, ถ้าไม่เจอก็ค่อยหา 'pending'"""
     for task in tasks:
-        if task['status'] == 'failed':
+        if task['status'] == 'pending':
             return task
     for task in tasks:
-        if task['status'] == 'pending':
+        if task['status'] == 'failed':
             return task
     return None # ไม่เหลือ task
 
@@ -139,7 +140,7 @@ def update_task_status(tasks, camera_name, new_status):
             task['status'] = new_status
             return
 
-def main_processor():
+def main_processor(run_date_str):
     # --- โหลด Config ของกล้อง (สำหรับส่ง Arguments) ---
     try:
         with open(CONFIG_FILE,"r",encoding='utf-8') as f: 
@@ -174,6 +175,9 @@ def main_processor():
             print("===========================================")
             try:
                 service = google_auth.get_drive_service()
+                csv_validator.process_data_validation(run_date_str)
+                print("✅ Validation step completed successfully.")
+
                 if service:
                     # 1. หา ID โฟลเดอร์หลัก
                     base_id = find_or_create_folder(service, "TDG-QA Zonemall")
@@ -244,6 +248,7 @@ def main_processor():
                 command.extend(["--start_min", str(cam_config["start_min"])])
             if cam_config.get("duration_min"):
                 command.extend(["--duration_min", str(cam_config["duration_min"])])
+            command.extend(["--run_date", run_date_str])
 
             
             # รันและรอจนจบ
@@ -290,6 +295,8 @@ def main_processor():
         time.sleep(1) # พัก 1 วิ
 
 if __name__ == "__main__":
+    run_date_str = datetime.now().strftime('%Y%m%d')
+
     if not os.path.exists(MASTER_LOG_FILE):
         print(f"Warning: '{MASTER_LOG_FILE}' not found.")
         print("Attempting to run 'generate_master_log.py' automatically...")
@@ -302,7 +309,7 @@ if __name__ == "__main__":
             if os.path.exists(MASTER_LOG_FILE):
                 print(f"Successfully generated '{MASTER_LOG_FILE}'.")
                 print("Proceeding with processor...")
-                main_processor() # 3. ถ้าสำเร็จ ก็เริ่มทำงานหลักต่อ
+                main_processor(run_date_str) # 3. ถ้าสำเร็จ ก็เริ่มทำงานหลักต่อ
             else:
                 print(f"!!! ERROR: 'generate_master_log.py' ran but failed to create the file.")
                 print("Please check 'config/camera_config.json' and permissions.")
@@ -312,4 +319,4 @@ if __name__ == "__main__":
             print("Please fix 'generate_master_log.py' or 'config/camera_config.json' and try again.")
     else:
         print("Master log found. Starting processor...")
-        main_processor()
+        main_processor(run_date_str)
