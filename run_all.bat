@@ -11,9 +11,9 @@ py download_rawdata.py
 REM --- ( run Keep-Awake ) ---
 echo.
 echo ========================================================
-echo Starting Keep-Awake script in a new minimized window...
+echo Starting Keep-Awake script in a new minimized window... (Skipped)
 echo ========================================================
-START "KeepAwake" /MIN py keep_awake.py
+@REM START "KeepAwake" /MIN py keep_awake.py
 
 REM --- Run Processing AI QA Camera ---
 echo.
