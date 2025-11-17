@@ -1,264 +1,4 @@
 {
-    "5002 Mahachai (Cam- 42 ) - 5002_InsideCustEnt 1": {
-        "file_name": "5002 Mahachai (Cam- 42 ) - 5002_InsideCustEnt 1",
-        "video_path": "ss_data/vdo/5002 Mahachai (Cam- 42 ) - 5002_InsideCustEnt 1.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5014 Ayutthaya (Cam- 95 ) - Basement#1": {
-        "file_name": "5014 Ayutthaya (Cam- 95 ) - Basement#1",
-        "video_path": "ss_data/vdo/5014 Ayutthaya (Cam- 95 ) - Basement#1.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5022 Sukumvit 50(Cam-84)-5022 Entrance 2 In": {
-        "file_name": "5022 Sukumvit 50(Cam-84)-5022 Entrance 2 In",
-        "video_path": "ss_data/vdo/5022 Sukumvit 50(Cam-84)-5022 Entrance 2 In.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5031 Had Yai (Cam- 93 ) - Inside Cust Entrance3": {
-        "file_name": "5031 Had Yai (Cam- 93 ) - Inside Cust Entrance3",
-        "video_path": "ss_data/vdo/5031 Had Yai (Cam- 93 ) - Inside Cust Entrance3.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5040 Ladprao(Cam-66)-5040_Entrance3 In": {
-        "file_name": "5040 Ladprao(Cam-66)-5040_Entrance3 In",
-        "video_path": "ss_data/vdo/5040 Ladprao(Cam-66)-5040_Entrance3 In.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5062 Fang (Cam- 49 ) - Inside Customer Entrance 2": {
-        "file_name": "5062 Fang (Cam- 49 ) - Inside Customer Entrance 2",
-        "video_path": "ss_data/vdo/5062 Fang (Cam- 49 ) - Inside Customer Entrance 2.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5094 Hatyai 2 (Cam- 75 ) - Z02_Inside Cust Ent.2": {
-        "file_name": "5094 Hatyai 2 (Cam- 75 ) - Z02_Inside Cust Ent.2",
-        "video_path": "ss_data/vdo/5094 Hatyai 2 (Cam- 75 ) - Z02_Inside Cust Ent.2.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5122 Lom Sak (Cam- 10 ) - 5122_Inside Customer Entrance2": {
-        "file_name": "5122 Lom Sak (Cam- 10 ) - 5122_Inside Customer Entrance2",
-        "video_path": "ss_data/vdo/5122 Lom Sak (Cam- 10 ) - 5122_Inside Customer Entrance2.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5147 Nang Rong (Cam- 46 ) - Entrance3 In": {
-        "file_name": "5147 Nang Rong (Cam- 46 ) - Entrance3 In",
-        "video_path": "ss_data/vdo/5147 Nang Rong (Cam- 46 ) - Entrance3 In.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5157 Kosumpisai (Cam- 55 ) - Entrance 2 In": {
-        "file_name": "5157 Kosumpisai (Cam- 55 ) - Entrance 2 In",
-        "video_path": "ss_data/vdo/5157 Kosumpisai (Cam- 55 ) - Entrance 2 In.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5164 Prathai (Cam- 39 ) - Entrance1 In (KFC)": {
-        "file_name": "5164 Prathai (Cam- 39 ) - Entrance1 In (KFC)",
-        "video_path": "ss_data/vdo/5164 Prathai (Cam- 39 ) - Entrance1 In (KFC).mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5164 Prathai (Cam- 42 ) - Entrance2 In (Gold)": {
-        "file_name": "5164 Prathai (Cam- 42 ) - Entrance2 In (Gold)",
-        "video_path": "ss_data/vdo/5164 Prathai (Cam- 42 ) - Entrance2 In (Gold).mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5182 Liab kongsong 2 (Cam- 2 ) - Entrance 2 In": {
-        "file_name": "5182 Liab kongsong 2 (Cam- 2 ) - Entrance 2 In",
-        "video_path": "ss_data/vdo/5182 Liab kongsong 2 (Cam- 2 ) - Entrance 2 In.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
     "5501 Roi ET (Cam- 28 ) - Entrance1 In": {
         "file_name": "5501 Roi ET (Cam- 28 ) - Entrance1 In",
         "video_path": "ss_data/vdo/5501 Roi ET (Cam- 28 ) - Entrance1 In.mp4",
@@ -271,12 +11,17 @@
         ],
         "start_min": 0,
         "duration_min": 0,
-        "pink_zone": [],
+        "pink_zone": [
+            [153, 13],
+            [158, 90],
+            [444, 89],
+            [450, 14]
+        ],
         "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
+            "red": [[157, 58], [447, 59]],
+            "blue": [[157, 58], [91, 115]],
+            "green": [[447, 59], [507, 126]],
+            "yellow": [[92, 115], [507, 126]]
         }
     },
     "5504 Lampang (Cam- 49 ) - Inside Customer Entrance 1": {
@@ -291,32 +36,17 @@
         ],
         "start_min": 0,
         "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "5533 Nong Chok (Cam- 44 ) - Entrance1 In&Gold": {
-        "file_name": "5533 Nong Chok (Cam- 44 ) - Entrance1 In&Gold",
-        "video_path": "ss_data/vdo/5533 Nong Chok (Cam- 44 ) - Entrance1 In&Gold.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
+        "pink_zone": [
+            [141, 41],
+            [169, 201],
+            [466, 213],
+            [484, 37]
         ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
         "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
+            "red": [[153, 117], [477, 117]],
+            "blue": [[152, 117], [0, 336]],
+            "green": [[478, 117], [578, 337]],
+            "yellow": [[0, 336], [579, 337]]
         }
     },
     "5537 Kabimburi (Cam- 74 ) - Customer Entrance 2": {
@@ -331,12 +61,17 @@
         ],
         "start_min": 0,
         "duration_min": 0,
-        "pink_zone": [],
+        "pink_zone": [
+            [302, 35],
+            [302, 136],
+            [462, 141],
+            [469, 39]
+        ],
         "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
+            "red": [[401, 88], [466, 88]],
+            "blue": [[400, 88], [283, 144]],
+            "green": [[468, 88], [474, 151]],
+            "yellow": [[282, 144], [474, 151]]
         }
     },
     "7205 Mall-Makro Chainat (Cam- 2 ) - Customer Entrance In": {
@@ -351,12 +86,17 @@
         ],
         "start_min": 0,
         "duration_min": 0,
-        "pink_zone": [],
+        "pink_zone": [
+            [350, 12],
+            [357, 143],
+            [591, 223],
+            [620, 32]
+        ],
         "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
+            "red": [[367, 79], [568, 121]],
+            "blue": [[366, 80], [105, 181]],
+            "green": [[569, 122], [528, 358]],
+            "yellow": [[103, 183], [528, 359]]
         }
     },
     "ST.127-Suksawat-5 CUSTOMER ENTRANCE": {
@@ -422,26 +162,6 @@
     "ST.148-Leabklongsong-ENTRANCE": {
         "file_name": "ST.148-Leabklongsong-ENTRANCE",
         "video_path": "ss_data/vdo/ST.148-Leabklongsong-ENTRANCE.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "ST.15-Rayong-17 CUSTOMER ENTRANCE": {
-        "file_name": "ST.15-Rayong-17 CUSTOMER ENTRANCE",
-        "video_path": "ss_data/vdo/ST.15-Rayong-17 CUSTOMER ENTRANCE.mp4",
         "display_width": 1280,
         "timestamp_roi": [
             0,

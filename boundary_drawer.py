@@ -7,6 +7,7 @@ from datetime import datetime
 
 # --- การตั้งค่าที่สำคัญ ---
 CONFIG_FILE = 'config/camera_config.json'
+CONFIG_FILE = 'config/new_cameras_to_add.json' 
 CONFIG_HELPER_FILE = "config/config_points.txt" # ไฟล์ที่เราจะบันทึกพิกัด
 
 # ====================== MAIN LOGIC =========================

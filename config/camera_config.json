@@ -399,5 +399,105 @@
             "green": [[282, 105], [638, 317]],
             "yellow": [[0, 257], [639, 318]]
         }
+    },
+    "5501 Roi ET (Cam- 28 ) - Entrance1 In": {
+        "file_name": "5501 Roi ET (Cam- 28 ) - Entrance1 In",
+        "video_path": "ss_data/vdo/5501 Roi ET (Cam- 28 ) - Entrance1 In.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 1,
+        "pink_zone": [
+            [153, 13],
+            [158, 90],
+            [444, 89],
+            [450, 14]
+        ],
+        "lines": {
+            "red": [[157, 58], [447, 59]],
+            "blue": [[157, 58], [91, 115]],
+            "green": [[447, 59], [507, 126]],
+            "yellow": [[92, 115], [507, 126]]
+        }
+    },
+    "5504 Lampang (Cam- 49 ) - Inside Customer Entrance 1": {
+        "file_name": "5504 Lampang (Cam- 49 ) - Inside Customer Entrance 1",
+        "video_path": "ss_data/vdo/5504 Lampang (Cam- 49 ) - Inside Customer Entrance 1.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 1,
+        "pink_zone": [
+            [141, 41],
+            [169, 201],
+            [466, 213],
+            [484, 37]
+        ],
+        "lines": {
+            "red": [[153, 117], [477, 117]],
+            "blue": [[152, 117], [0, 336]],
+            "green": [[478, 117], [578, 337]],
+            "yellow": [[0, 336], [579, 337]]
+        }
+    },
+    "5537 Kabimburi (Cam- 74 ) - Customer Entrance 2": {
+        "file_name": "5537 Kabimburi (Cam- 74 ) - Customer Entrance 2",
+        "video_path": "ss_data/vdo/5537 Kabimburi (Cam- 74 ) - Customer Entrance 2.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 1,
+        "pink_zone": [
+            [302, 35],
+            [302, 136],
+            [462, 141],
+            [469, 39]
+        ],
+        "lines": {
+            "red": [[401, 88], [466, 88]],
+            "blue": [[400, 88], [283, 144]],
+            "green": [[468, 88], [474, 151]],
+            "yellow": [[282, 144], [474, 151]]
+        }
+    },
+    "7205 Mall-Makro Chainat (Cam- 2 ) - Customer Entrance In": {
+        "file_name": "7205 Mall-Makro Chainat (Cam- 2 ) - Customer Entrance In",
+        "video_path": "ss_data/vdo/7205 Mall-Makro Chainat (Cam- 2 ) - Customer Entrance In.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 1,
+        "pink_zone": [
+            [350, 12],
+            [357, 143],
+            [591, 223],
+            [620, 32]
+        ],
+        "lines": {
+            "red": [[367, 79], [568, 121]],
+            "blue": [[366, 80], [105, 181]],
+            "green": [[569, 122], [528, 358]],
+            "yellow": [[103, 183], [528, 359]]
+        }
     }
 }

@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import glob
 import datetime
+import json
 
 def process_data_validation(run_date_str=None):
     
@@ -40,6 +41,23 @@ def process_data_validation(run_date_str=None):
     
     print(f"TDG (Reference) file: {tdg_file_path}")
     print(f"SS (Source) folder: {folder2_path}")
+
+    MAIN_CONFIG_FILE = 'config/camera_config.json'
+    try:
+        print(f"Reading main config file: {MAIN_CONFIG_FILE}...")
+        with open(MAIN_CONFIG_FILE, "r", encoding='utf-8') as f:
+            camera_config = json.load(f)
+        
+        # สร้าง Set ของ "Key" (ชื่อกล้อง) ที่เราตั้งค่าไว้แล้ว
+        configured_camera_keys = set(camera_config.keys())
+        print(f"Found {len(configured_camera_keys)} configured cameras in '{MAIN_CONFIG_FILE}'.")
+        
+    except FileNotFoundError:
+        print(f"Error: Main config file '{MAIN_CONFIG_FILE}' not found. Cannot filter cameras.")
+        return # ออกจากโปรแกรมถ้าไม่มีไฟล์ Config
+    except Exception as e:
+        print(f"Error reading {MAIN_CONFIG_FILE}: {e}")
+        return
 
     # --- 3. อ่านและเตรียมไฟล์หลัก (TDG) ---
     try:
@@ -94,6 +112,14 @@ def process_data_validation(run_date_str=None):
             base_name = os.path.basename(xlsx_file_path)
             cam_name, _ = os.path.splitext(base_name)
             cam_name_stripped = cam_name.strip()
+
+            # อยู่ใน "Set ของ Key" ที่เราโหลดมาจาก camera_config.json หรือไม่
+            if cam_name_stripped not in configured_camera_keys:
+                print(f"\n--- Skipping file {i+1}/{len(excel_files_to_process)}: {cam_name} ---")
+                print(f"Reason: Camera '{cam_name_stripped}' not found in '{MAIN_CONFIG_FILE}'.")
+                continue # <-- สั่งให้ข้ามไปทำไฟล์ Excel ถัดไปทันที
+
+            print(f"\n--- Processing file {i+1}/{len(excel_files_to_process)}: {cam_name} ---")
 
             print(f"\n--- Processing file {i+1}/{len(excel_files_to_process)}: {cam_name} ---")
             
