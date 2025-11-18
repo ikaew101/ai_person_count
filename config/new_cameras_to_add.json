@@ -1,7 +1,7 @@
 {
-    "5501 Roi ET (Cam- 28 ) - Entrance1 In": {
-        "file_name": "5501 Roi ET (Cam- 28 ) - Entrance1 In",
-        "video_path": "ss_data/vdo/5501 Roi ET (Cam- 28 ) - Entrance1 In.mp4",
+    "5146 JorHor (Cam- 49 ) - Entrance1 In": {
+        "file_name": "5146 JorHor (Cam- 49 ) - Entrance1 In",
+        "video_path": "ss_data/vdo/5146 JorHor (Cam- 49 ) - Entrance1 In.mp4",
         "display_width": 1280,
         "timestamp_roi": [
             0,
@@ -12,21 +12,21 @@
         "start_min": 0,
         "duration_min": 0,
         "pink_zone": [
-            [153, 13],
-            [158, 90],
-            [444, 89],
-            [450, 14]
+            [255, 34],
+    [258, 115],
+    [441, 116],
+    [443, 31]
         ],
         "lines": {
-            "red": [[157, 58], [447, 59]],
-            "blue": [[157, 58], [91, 115]],
-            "green": [[447, 59], [507, 126]],
-            "yellow": [[92, 115], [507, 126]]
+            "red": [[284, 78], [441, 77]],
+"blue": [[284, 78], [88, 275]],
+"green": [[440, 77], [597, 336]],
+"yellow": [[87, 276], [597, 338]]
         }
     },
-    "5504 Lampang (Cam- 49 ) - Inside Customer Entrance 1": {
-        "file_name": "5504 Lampang (Cam- 49 ) - Inside Customer Entrance 1",
-        "video_path": "ss_data/vdo/5504 Lampang (Cam- 49 ) - Inside Customer Entrance 1.mp4",
+    "5534 Prachuad Kirikhan (Cam- 49 ) - Z13_InsideCustomerEntrance1": {
+        "file_name": "5534 Prachuad Kirikhan (Cam- 49 ) - Z13_InsideCustomerEntrance1",
+        "video_path": "ss_data/vdo/5534 Prachuad Kirikhan (Cam- 49 ) - Z13_InsideCustomerEntrance1.mp4",
         "display_width": 1280,
         "timestamp_roi": [
             0,
@@ -37,21 +37,21 @@
         "start_min": 0,
         "duration_min": 0,
         "pink_zone": [
-            [141, 41],
-            [169, 201],
-            [466, 213],
-            [484, 37]
+            [17, 69],
+    [34, 161],
+    [160, 113],
+    [153, 29]
         ],
         "lines": {
-            "red": [[153, 117], [477, 117]],
-            "blue": [[152, 117], [0, 336]],
-            "green": [[478, 117], [578, 337]],
-            "yellow": [[0, 336], [579, 337]]
+            "red": [[26, 123], [156, 80]],
+"blue": [[26, 123], [35, 359]],
+"green": [[157, 79], [630, 308]],
+"yellow": [[34, 359], [630, 309]]
         }
     },
-    "5537 Kabimburi (Cam- 74 ) - Customer Entrance 2": {
-        "file_name": "5537 Kabimburi (Cam- 74 ) - Customer Entrance 2",
-        "video_path": "ss_data/vdo/5537 Kabimburi (Cam- 74 ) - Customer Entrance 2.mp4",
+    "5171 Angthong (Cam- 57 ) - Entrance 1 In": {
+        "file_name": "5171 Angthong (Cam- 57 ) - Entrance 1 In",
+        "video_path": "ss_data/vdo/5171 Angthong (Cam- 57 ) - Entrance 1 In.mp4",
         "display_width": 1280,
         "timestamp_roi": [
             0,
@@ -62,21 +62,21 @@
         "start_min": 0,
         "duration_min": 0,
         "pink_zone": [
-            [302, 35],
-            [302, 136],
-            [462, 141],
-            [469, 39]
+            [56, 59],
+    [78, 244],
+    [357, 211],
+    [350, 32]
         ],
         "lines": {
-            "red": [[401, 88], [466, 88]],
-            "blue": [[400, 88], [283, 144]],
-            "green": [[468, 88], [474, 151]],
-            "yellow": [[282, 144], [474, 151]]
+            "red": [[79, 163], [332, 136]],
+"blue": [[78, 163], [5, 248]],
+"green": [[332, 136], [428, 175]],
+"yellow": [[4, 249], [428, 177]]
         }
     },
-    "7205 Mall-Makro Chainat (Cam- 2 ) - Customer Entrance In": {
-        "file_name": "7205 Mall-Makro Chainat (Cam- 2 ) - Customer Entrance In",
-        "video_path": "ss_data/vdo/7205 Mall-Makro Chainat (Cam- 2 ) - Customer Entrance In.mp4",
+   "5150 Yasothon (Cam- 44 ) - Entrance 1 In ": {
+        "file_name": "5150 Yasothon (Cam- 44 ) - Entrance 1 In",
+        "video_path": "ss_data/vdo/5150 Yasothon (Cam- 44 ) - Entrance 1 In.mp4",
         "display_width": 1280,
         "timestamp_roi": [
             0,
@@ -87,21 +87,21 @@
         "start_min": 0,
         "duration_min": 0,
         "pink_zone": [
-            [350, 12],
-            [357, 143],
-            [591, 223],
-            [620, 32]
+            [91, 50],
+    [119, 196],
+    [382, 175],
+    [382, 27]
         ],
         "lines": {
-            "red": [[367, 79], [568, 121]],
-            "blue": [[366, 80], [105, 181]],
-            "green": [[569, 122], [528, 358]],
-            "yellow": [[103, 183], [528, 359]]
+            "red": [[108, 135], [382, 111]],
+"blue": [[107, 135], [6, 292]],
+"green": [[382, 111], [637, 302]],
+"yellow": [[6, 292], [637, 303]]
         }
     },
-    "ST.127-Suksawat-5 CUSTOMER ENTRANCE": {
-        "file_name": "ST.127-Suksawat-5 CUSTOMER ENTRANCE",
-        "video_path": "ss_data/vdo/ST.127-Suksawat-5 CUSTOMER ENTRANCE.mp4",
+    "5153 Pak Thong Chai (Cam- 56 ) - Entrance1 In": {
+        "file_name": "5153 Pak Thong Chai (Cam- 56 ) - Entrance1 In",
+        "video_path": "ss_data/vdo/5153 Pak Thong Chai (Cam- 56 ) - Entrance1 In.mp4",
         "display_width": 1280,
         "timestamp_roi": [
             0,
@@ -111,17 +111,22 @@
         ],
         "start_min": 0,
         "duration_min": 0,
-        "pink_zone": [],
+        "pink_zone": [
+            [120, 28],
+    [143, 216],
+    [471, 235],
+    [502, 44]
+        ],
         "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
+            "red": [[199, 139], [436, 154]],
+"blue": [[198, 139], [34, 272]],
+"green": [[435, 154], [626, 345]],
+"yellow": [[33, 273], [627, 345]]
         }
     },
-    "ST.130-Nathong Charoeng-CH17 CUSTOMER ENTRANCE2": {
-        "file_name": "ST.130-Nathong Charoeng-CH17 CUSTOMER ENTRANCE2",
-        "video_path": "ss_data/vdo/ST.130-Nathong Charoeng-CH17 CUSTOMER ENTRANCE2.mp4",
+    "5150 Yasothon (Cam- 45 ) - Entrance 2 In": {
+        "file_name": "5150 Yasothon (Cam- 45 ) - Entrance 2 In",
+        "video_path": "ss_data/vdo/5150 Yasothon (Cam- 45 ) - Entrance 2 In.mp4",
         "display_width": 1280,
         "timestamp_roi": [
             0,
@@ -131,17 +136,21 @@
         ],
         "start_min": 0,
         "duration_min": 0,
-        "pink_zone": [],
+        "pink_zone": [
+            [472, 10],
+    [454, 159],
+    [594, 173],
+    [616, 13]],
         "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
+            "red": [[461, 100], [626, 138]],
+"blue": [[460, 99], [212, 143]],
+"green": [[626, 139], [621, 366]],
+"yellow": [[211, 142], [622, 367]]
         }
     },
-    "ST.135-Bang Ko Ram-28 CUSTOMER ENT1+INFORMATION": {
-        "file_name": "ST.135-Bang Ko Ram-28 CUSTOMER ENT1+INFORMATION",
-        "video_path": "ss_data/vdo/ST.135-Bang Ko Ram-28 CUSTOMER ENT1+INFORMATION.mp4",
+    "5159 U Thong (Cam- 58 ) - Z08_Cust.Ent. - FC": {
+        "file_name": "5159 U Thong (Cam- 58 ) - Z08_Cust.Ent. - FC",
+        "video_path": "ss_data/vdo/5159 U Thong (Cam- 58 ) - Z08_Cust.Ent. - FC.mp4",
         "display_width": 1280,
         "timestamp_roi": [
             0,
@@ -151,17 +160,22 @@
         ],
         "start_min": 0,
         "duration_min": 0,
-        "pink_zone": [],
+        "pink_zone": [
+            [255, 24],
+    [256, 173],
+    [425, 183],
+    [430, 31]
+        ],
         "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
+            "red": [[245, 95], [433, 105]],
+"blue": [[243, 95], [30, 353]],
+"green": [[433, 105], [557, 356]],
+"yellow": [[29, 354], [557, 357]]
         }
     },
-    "ST.148-Leabklongsong-ENTRANCE": {
-        "file_name": "ST.148-Leabklongsong-ENTRANCE",
-        "video_path": "ss_data/vdo/ST.148-Leabklongsong-ENTRANCE.mp4",
+    "5148 Nong Chang (Cam- 49 ) - Customer Entrance 2": {
+        "file_name": "5148 Nong Chang (Cam- 49 ) - Customer Entrance 2",
+        "video_path": "ss_data/vdo/5148 Nong Chang (Cam- 49 ) - Customer Entrance 2.mp4",
         "display_width": 1280,
         "timestamp_roi": [
             0,
@@ -171,72 +185,17 @@
         ],
         "start_min": 0,
         "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "ST.162-Jas Amata-CAM 24 CUSTIOMER ENTRANCE": {
-        "file_name": "ST.162-Jas Amata-CAM 24 CUSTIOMER ENTRANCE",
-        "video_path": "ss_data/vdo/ST.162-Jas Amata-CAM 24 CUSTIOMER ENTRANCE.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
+        "pink_zone": [
+            [119, 11],
+    [130, 183],
+    [316, 168],
+    [323, 11]
         ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
         "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "ST.169-Phang Nga-CAM 26 CUSTIOMER ENTRANCE": {
-        "file_name": "ST.169-Phang Nga-CAM 26 CUSTIOMER ENTRANCE",
-        "video_path": "ss_data/vdo/ST.169-Phang Nga-CAM 26 CUSTIOMER ENTRANCE.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
-        }
-    },
-    "ST.78-Kallapapluk-8 CUSTOMER ENTRANCE": {
-        "file_name": "ST.78-Kallapapluk-8 CUSTOMER ENTRANCE",
-        "video_path": "ss_data/vdo/ST.78-Kallapapluk-8 CUSTOMER ENTRANCE.mp4",
-        "display_width": 1280,
-        "timestamp_roi": [
-            0,
-            0,
-            0,
-            0
-        ],
-        "start_min": 0,
-        "duration_min": 0,
-        "pink_zone": [],
-        "lines": {
-            "red": [],
-            "blue": [],
-            "green": [],
-            "yellow": []
+            "red": [[202, 92], [326, 90]],
+"blue": [[200, 91], [41, 353]],
+"green": [[327, 90], [486, 233]],
+"yellow": [[39, 355], [488, 234]]
         }
     }
 }

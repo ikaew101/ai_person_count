@@ -11,7 +11,7 @@ def process_data_validation(run_date_str=None):
     # ======================================================================
     
     # 1. กำหนดจำนวนนาทีที่จะตรวจสอบ (จากต้นชั่วโมง)
-    MINUTES_TO_CHECK = 1
+    MINUTES_TO_CHECK = 10
     
     # 2. กำหนดชื่อคอลัมน์ "เวลา" ในไฟล์ TDG (AI Model for data validation.csv)
     TDG_TIMESTAMP_COLUMN = 'Timestamp' 
