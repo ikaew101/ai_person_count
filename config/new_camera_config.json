@@ -1,0 +1,27 @@
+{
+    "5137 Chiang Yuen (Cam- 46 ) - Entrance1 IN": {
+        "file_name": "5137 Chiang Yuen (Cam- 46 ) - Entrance1 IN",
+        "video_path": "ss_data/vdo/5137 Chiang Yuen (Cam- 46 ) - Entrance1 IN.mp4",
+        "display_width": 1280,
+        "timestamp_roi": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "start_min": 0,
+        "duration_min": 10,
+        "pink_zone": [
+            [74, 40],
+            [91, 171],
+            [344, 138],
+            [345, 13]
+        ],
+        "lines": {
+            "red": [[97, 96], [303, 69]],
+            "blue": [[97, 96], [1, 238]],
+            "green": [[303, 68], [607, 229]],
+            "yellow": [[2, 238], [609, 230]]
+        }
+    }
+}
