@@ -53,6 +53,7 @@ def create_default_entry(video_filename):
     
     return {
         "file_name": camera_key,
+        "active": false,
         "video_path": video_path,
         "display_width": 1280,
         "timestamp_roi": [0, 0, 0, 0],

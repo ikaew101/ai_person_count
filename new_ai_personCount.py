@@ -245,8 +245,8 @@ def main():
                 current_video_msec = cap.get(cv2.CAP_PROP_POS_MSEC)
                 current_video_sec = current_video_msec / 1000.0
                 
-                ocr_timestamp_dt = get_timestamp_from_frame(frame, timestamp_roi)
-                display_timestamp_str = ocr_timestamp_dt.strftime('%d-%m-%Y %H:%M:%S') if ocr_timestamp_dt else ""
+                # ocr_timestamp_dt = get_timestamp_from_frame(frame, timestamp_roi)
+                # display_timestamp_str = ocr_timestamp_dt.strftime('%d-%m-%Y %H:%M:%S') if ocr_timestamp_dt else ""
 
                 # --- Time Range Check (เหมือนเดิม) ---
                 process_this_frame = True

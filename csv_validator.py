@@ -11,6 +11,7 @@ def process_data_validation(run_date_str=None):
     # ======================================================================
     
     # 1. กำหนดจำนวนนาทีที่จะตรวจสอบ (จากต้นชั่วโมง)
+    CHECK_START_MINUTE = 0
     MINUTES_TO_CHECK = 10
     
     # 2. กำหนดชื่อคอลัมน์ "เวลา" ในไฟล์ TDG (AI Model for data validation.csv)
@@ -150,9 +151,13 @@ def process_data_validation(run_date_str=None):
                     else:
                         df_sorted = df_filtered.sort_values(by='start_time')
                         earliest_ss_time = df_sorted['start_time'].iloc[0]
-                        ss_min_time = earliest_ss_time.replace(minute=0, second=0, microsecond=0)
-                        ss_time_limit = ss_min_time + pd.Timedelta(minutes=MINUTES_TO_CHECK)
+                        # ss_min_time = earliest_ss_time.replace(minute=0, second=0, microsecond=0)
+                        # ss_time_limit = ss_min_time + pd.Timedelta(minutes=MINUTES_TO_CHECK)
                         
+                        base_hour_time = earliest_ss_time.replace(minute=0, second=0, microsecond=0)
+                        ss_min_time = base_hour_time + pd.Timedelta(minutes=CHECK_START_MINUTE)
+                        ss_time_limit = ss_min_time + pd.Timedelta(minutes=MINUTES_TO_CHECK)
+
                         print(f"(SS) Earliest timestamp: {earliest_ss_time}")
                         print(f"(SS) Calculated window: {ss_min_time} TO {ss_time_limit}")
 
@@ -180,7 +185,11 @@ def process_data_validation(run_date_str=None):
                 df_tdg_cam_sorted = df_tdg_cam_specific.sort_values(by=TDG_TIMESTAMP_COLUMN)
                 
                 earliest_tdg_time = df_tdg_cam_sorted[TDG_TIMESTAMP_COLUMN].iloc[0]
-                tdg_min_time = earliest_tdg_time.replace(minute=0, second=0, microsecond=0)
+                # tdg_min_time = earliest_tdg_time.replace(minute=0, second=0, microsecond=0)
+                # tdg_time_limit = tdg_min_time + pd.Timedelta(minutes=MINUTES_TO_CHECK)
+
+                base_hour_time = earliest_tdg_time.replace(minute=0, second=0, microsecond=0)
+                tdg_min_time = base_hour_time + pd.Timedelta(minutes=CHECK_START_MINUTE)
                 tdg_time_limit = tdg_min_time + pd.Timedelta(minutes=MINUTES_TO_CHECK)
                 
                 print(f"(TDG) Earliest timestamp: {earliest_tdg_time}")

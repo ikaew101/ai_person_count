@@ -19,13 +19,22 @@ def create_master_log():
     
     tasks = []
     for cam_name in camera_names:
-        video_path = full_config[cam_name].get('video_path')
-        if video_path:
+        cam_data = full_config[cam_name]
+        video_path = cam_data.get('video_path')
+        
+        # ดึงค่า active (ถ้าไม่มี key นี้ ให้ถือว่าเป็น True ไว้ก่อน)
+        is_active = cam_data.get('active', True) 
+
+        if video_path and is_active:
+            # ถ้ามีไฟล์ และ Active = True -> เพิ่มงาน
             tasks.append({
                 'camera_name': cam_name,
                 'video_path': video_path,
-                'status': 'pending' # สถานะเริ่มต้น
+                'status': 'pending'
             })
+        elif not is_active:
+            # ถ้า Active = False -> แจ้งเตือนว่าข้าม
+            print(f"Skipping '{cam_name}' (Configured as inactive).")
         else:
             print(f"Warning: Skipping '{cam_name}', 'video_path' not found.")
 
