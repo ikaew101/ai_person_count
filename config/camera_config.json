@@ -740,8 +740,8 @@
             0,
             0
         ],
-        "start_min": 0,
-        "duration_min": 0,
+        "start_min": 10,
+        "duration_min": 1,
         "pink_zone": [
             [119, 11],
             [130, 183],

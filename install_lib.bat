@@ -19,6 +19,16 @@ echo =======================================================
 py -m pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
 echo =======================================================
+echo Installing Pandas...
+echo =======================================================
+py -m pip install pandas
+
+echo =======================================================
+echo Installing OpenCV...
+echo =======================================================
+py -m pip install opencv-python
+
+echo =======================================================
 echo All Python libraries are installed!
 echo =======================================================
 echo.

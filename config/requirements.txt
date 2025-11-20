@@ -4,3 +4,8 @@ ultralytics
 pandas
 openpyxl
 pytesseract
+scikit-image
+filterpy
+lapx
+scipy
+matplotlib

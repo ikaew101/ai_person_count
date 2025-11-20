@@ -7,12 +7,12 @@ import json
 def process_data_validation(run_date_str=None):
     
     # ======================================================================
-    # !! ตัวแปรตั้งค่า: !!
+    # !! Config: !!
     # ======================================================================
     
     # 1. กำหนดจำนวนนาทีที่จะตรวจสอบ (จากต้นชั่วโมง)
-    CHECK_START_MINUTE = 0
-    MINUTES_TO_CHECK = 10
+    CHECK_START_MINUTE = 10
+    MINUTES_TO_CHECK = 1
     
     # 2. กำหนดชื่อคอลัมน์ "เวลา" ในไฟล์ TDG (AI Model for data validation.csv)
     TDG_TIMESTAMP_COLUMN = 'Timestamp' 
@@ -50,8 +50,13 @@ def process_data_validation(run_date_str=None):
             camera_config = json.load(f)
         
         # สร้าง Set ของ "Key" (ชื่อกล้อง) ที่เราตั้งค่าไว้แล้ว
-        configured_camera_keys = set(camera_config.keys())
-        print(f"Found {len(configured_camera_keys)} configured cameras in '{MAIN_CONFIG_FILE}'.")
+        configured_camera_keys = set()
+        for cam_key, cam_data in camera_config.items():
+            # ถ้าไม่มี key 'active' ให้ถือว่าเป็น True (default)
+            if cam_data.get('active', True):
+                configured_camera_keys.add(cam_key)
+
+        print(f"Found {len(configured_camera_keys)} ACTIVE cameras in '{MAIN_CONFIG_FILE}'.")
         
     except FileNotFoundError:
         print(f"Error: Main config file '{MAIN_CONFIG_FILE}' not found. Cannot filter cameras.")
