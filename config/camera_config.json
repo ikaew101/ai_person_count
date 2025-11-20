@@ -653,7 +653,7 @@
     },
     "5153 Pak Thong Chai (Cam- 56 ) - Entrance1 In": {
         "file_name": "5153 Pak Thong Chai (Cam- 56 ) - Entrance1 In",
-        "active": true,
+        "active": false,
         "video_path": "ss_data/vdo/5153 Pak Thong Chai (Cam- 56 ) - Entrance1 In.mp4",
         "display_width": 1280,
         "timestamp_roi": [
@@ -731,7 +731,7 @@
     },
     "5148 Nong Chang (Cam- 49 ) - Customer Entrance 2": {
         "file_name": "5148 Nong Chang (Cam- 49 ) - Customer Entrance 2",
-        "active": false,
+        "active": true,
         "video_path": "ss_data/vdo/5148 Nong Chang (Cam- 49 ) - Customer Entrance 2.mp4",
         "display_width": 1280,
         "timestamp_roi": [
